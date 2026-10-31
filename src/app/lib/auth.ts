@@ -11,7 +11,7 @@ if (!mongoUrl) {
 
 const client = new MongoClient(mongoUrl);
 
-const db = client.db("usertest");
+const db = client.db("studiodatabase");
 
 export const auth = betterAuth({
     baseURL: process.env.BETTER_AUTH_URL,
@@ -21,6 +21,12 @@ export const auth = betterAuth({
     }),
     emailAndPassword: {
         enabled: true,
+    },
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_ID as string,
+            clientSecret: process.env.GOOGLE_SECRET as string,
+        },
     },
 
 

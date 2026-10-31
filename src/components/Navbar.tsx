@@ -1,10 +1,24 @@
+
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
-import { Menu, Aperture } from "lucide-react";
+import { usePathname } from "next/navigation";
+
+import { Menu, Aperture, LogOut } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetTitle,
+} from "@/components/ui/sheet";
+
+import Avatarmenu from "./Avatarmenu";
+import ThemeToggle from "./Themechnager";
+import { authClient } from "@/lib/auth-client";
 
 const navLinks = [
   { name: "Home", href: "/" },
@@ -15,134 +29,237 @@ const navLinks = [
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeHref, setActiveHref] = useState<string | null>(null);
+  const [activeHref, setActiveHref] = useState("");
 
+  const pathname = usePathname();
+
+  // Testing session (Replace with Better Auth session later)
+  const { data: session, isPending, error } = authClient.useSession();
+  const user = session?.user;
+  console.log(user);
+  const isActiveLink = (href) => {
+    if (href.includes("#")) {
+      return activeHref === href;
+    }
+
+    return pathname === href;
+  };
+
+  const handleNavigation = (href) => {
+    setActiveHref(href);
+    setIsOpen(false);
+  };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-white/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/80">
 
-        {/* Left: Logo */}
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white shadow-md group-hover:bg-amber-600 transition-all">
-            <Aperture className="w-6 h-6" />
+      <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+
+        {/* Logo */}
+        <Link
+          href="/"
+          onClick={() => setActiveHref("")}
+          className="group flex items-center gap-3"
+        >
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white shadow-md transition-all group-hover:bg-amber-600">
+            <Aperture className="h-6 w-6" />
           </div>
+
           <span className="text-xl font-bold tracking-tight">
-            <span className="text-black">Studio</span>
-            <span className="text-amber-500">Space</span>
+            <span className="text-black dark:text-white">
+              Studio
+            </span>
+            <span className="text-amber-500">
+              Space
+            </span>
           </span>
         </Link>
 
-        {/* Center: Desktop Navigation Links */}
-        <nav className="hidden md:flex items-center gap-8">
+        {/* Desktop Navigation */}
+        <nav className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => {
-            const isActive = activeHref === link.href;
+            const isActive = isActiveLink(link.href);
+
             return (
               <Link
                 key={link.name}
                 href={link.href}
                 onClick={() => setActiveHref(link.href)}
-                className={`relative text-sm font-medium transition-colors py-2 ${isActive ? "text-black font-semibold" : "text-gray-500 hover:text-black"
+                className={`relative py-2 text-sm font-medium transition-colors ${isActive
+                  ? "font-semibold text-black dark:text-white"
+                  : "text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
                   }`}
               >
                 {link.name}
-                {/* Active Underline Indicator matching image */}
+
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 w-full h-[3px] bg-amber-500 rounded-full" />
+                  <span className="absolute bottom-0 left-0 h-[3px] w-full rounded-full bg-amber-500" />
                 )}
               </Link>
             );
           })}
         </nav>
 
-        {/* Right: Auth Buttons (Desktop) */}
-        <div className="hidden md:flex items-center gap-3">
-          <Button
-            variant="outline"
-            className="rounded-full px-6 border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-black"
+        {/* Desktop Actions */}
+        <div className="hidden items-center gap-3 md:flex">
+          <ThemeToggle />
 
-          >
-            <Link href="/login">Login</Link>
-          </Button>
-          <Button
-            className="rounded-full px-6 bg-amber-500 hover:bg-amber-600 text-white shadow-md shadow-amber-500/20"
+          {session ? (
+            <Avatarmenu user={user} />
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className="inline-flex h-10 items-center justify-center rounded-full border border-gray-200 px-6 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900"
+              >
+                Login
+              </Link>
 
-          >
-            <Link href="/register">Register</Link>
-          </Button>
+              <Link
+                href="/register"
+                className="inline-flex h-10 items-center justify-center rounded-full bg-amber-500 px-6 text-sm font-medium text-white shadow-md shadow-amber-500/20 transition hover:bg-amber-600"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
 
-        {/* Mobile Menu Trigger (Sheet) */}
-        <div className="flex md:hidden items-center">
+        {/* Mobile Actions */}
+        <div className="flex items-center gap-2 md:hidden">
+          <ThemeToggle />
+
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
-            <SheetTrigger >
-              <Button variant="ghost" size="icon" className="text-gray-700">
-                <Menu className="w-6 h-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
+            {/* Sheet Trigger */}
+            <SheetTrigger
+              aria-label="Open navigation menu"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900"
+            >
+              <Menu className="h-6 w-6" />
             </SheetTrigger>
-            <SheetContent side="left" className="w-[300px] sm:w-[350px] p-6 flex flex-col justify-between">
-              {/* Accessibility Title for Radix/Shadcn Sheet */}
-              <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
+
+            {/* Mobile Sidebar */}
+            <SheetContent
+              side="left"
+              className="flex w-[300px] flex-col justify-between p-6 sm:w-[350px]"
+            >
+              <SheetTitle className="sr-only">
+                Navigation Menu
+              </SheetTitle>
 
               <div>
-                {/* Mobile Header Logo */}
-                <div className="flex items-center gap-3 mb-8">
-                  <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center text-white">
-                    <Aperture className="w-5 h-5" />
-                  </div>
-                  <span className="text-lg font-bold">
-                    <span className="text-black">Studio</span>
-                    <span className="text-amber-500">Space</span>
-                  </span>
-                </div>
+                {/* Mobile User */}
+                {session ? (
+                  <div className="mb-6 flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
+                    <Image
+                      src={user?.image}
+                      width={50}
+                      height={50}
+                      alt={user.name}
+                      className="h-10 w-10 rounded-full object-cover"
+                    />
 
-                {/* Mobile Nav Links */}
-                <div className="flex flex-col gap-4">
+                    <div className="flex min-w-0 flex-col">
+                      <span className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                        {user.name}
+                      </span>
+
+                      <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+                        {user.email}
+                      </span>
+                    </div>
+                  </div>
+                ) : (
+                  <Link
+                    href="/"
+                    onClick={() => handleNavigation("/")}
+                    className="mb-8 flex items-center gap-3"
+                  >
+                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white">
+                      <Aperture className="h-5 w-5" />
+                    </div>
+
+                    <span className="text-lg font-bold">
+                      Studio<span className="text-amber-500">Space</span>
+                    </span>
+                  </Link>
+                )}
+
+                {/* Mobile Navigation */}
+                <nav className="flex flex-col gap-2">
                   {navLinks.map((link) => {
-                    const isActive = activeHref === link.href;
+                    const isActive = isActiveLink(link.href);
+
                     return (
                       <Link
                         key={link.name}
                         href={link.href}
-                        onClick={() => {
-                          setActiveHref(link.href);
-                          setIsOpen(false);
-                        }}
-                        className={`text-base font-medium px-4 py-2.5 rounded-lg transition-colors ${isActive
-                          ? "bg-amber-50 text-amber-600 font-semibold"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-black"
+                        onClick={() => handleNavigation(link.href)}
+                        className={`rounded-lg px-4 py-2.5 text-base font-medium transition-colors ${isActive
+                          ? "bg-amber-50 font-semibold text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
+                          : "text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-white"
                           }`}
                       >
                         {link.name}
                       </Link>
                     );
                   })}
-                </div>
+                </nav>
               </div>
 
-              {/* Mobile Auth Buttons */}
-              <div className="flex flex-col gap-3 pt-6 border-t border-gray-100">
-                <Button
-                  variant="outline"
-                  className="w-full rounded-full border-gray-300 text-gray-700"
+              {/* Mobile Footer Actions */}
+              <div className="flex flex-col gap-3 border-t border-gray-100 pt-6 dark:border-gray-800">
 
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Link href="/login">Login</Link>
-                </Button>
-                <Button
-                  className="w-full rounded-full bg-amber-500 hover:bg-amber-600 text-white"
+                {session ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setIsOpen(false)}
+                      className="inline-flex h-11 items-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900"
+                    >
+                      Dashboard
+                    </Link>
 
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Link href="/register">Register</Link>
-                </Button>
+                    <Link
+                      href="/studios/add"
+                      onClick={() => setIsOpen(false)}
+                      className="inline-flex h-11 items-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900"
+                    >
+                      Add New Studio
+                    </Link>
+
+                    <Button
+                      variant="destructive"
+                      className="w-full justify-start gap-2 rounded-xl"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <LogOut className="h-4 w-4" />
+                      Log out
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setIsOpen(false)}
+                      className="inline-flex h-11 items-center justify-center rounded-full border border-gray-300 text-sm font-medium text-gray-700 dark:border-gray-800 dark:text-gray-300"
+                    >
+                      Login
+                    </Link>
+
+                    <Link
+                      href="/register"
+                      onClick={() => setIsOpen(false)}
+                      className="inline-flex h-11 items-center justify-center rounded-full bg-amber-500 text-sm font-medium text-white hover:bg-amber-600"
+                    >
+                      Register
+                    </Link>
+                  </>
+                )}
               </div>
             </SheetContent>
           </Sheet>
         </div>
-
       </div>
     </header>
   );
