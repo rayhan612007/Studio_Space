@@ -28,7 +28,7 @@ const Signingoogle = () => {
                     type="button"
                     disabled={googleLoading}
                     onClick={handleGoogleSignIn}
-                    className="w-full h-11 rounded-xl border-gray-200 text-gray-700 hover:bg-gray-50 hover:text-black font-medium transition-all flex items-center justify-center gap-3 shadow-sm"
+                    className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border-gray-200 font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:text-black dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
                 >
                     {googleLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin text-gray-500" />

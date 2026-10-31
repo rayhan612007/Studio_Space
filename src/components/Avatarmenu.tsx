@@ -21,8 +21,13 @@ import {
 } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
 import { redirect } from "next/navigation";
-
-export default function Avatarmenu({ user }) {
+import { Idata } from "./type/Idata";
+interface Iuser {
+    "email": string,
+    "image": string
+    "name": string
+}
+export default function Avatarmenu({ user }: { user: Iuser }) {
     const handlelogout = async () => {
         await authClient.signOut({
         });

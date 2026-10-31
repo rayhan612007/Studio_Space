@@ -36,18 +36,18 @@ const workflowSteps = [
 
 export default function HowItWorks() {
     return (
-        <section id="how-it-works" className="py-20 bg-white">
+        <section id="how-it-works" className="bg-white py-20 dark:bg-gray-900">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Section Header */}
                 <div className="text-center max-w-2xl mx-auto mb-16">
-                    <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
+                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:bg-amber-950/60 dark:text-amber-300">
                         Seamless Process
                     </span>
-                    <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mt-3">
+                    <h2 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
                         How StudioSpace Works
                     </h2>
-                    <p className="text-base text-gray-500 mt-2">
+                    <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
                         Book your ideal creative environment in four simple, straightforward steps.
                     </p>
                 </div>
@@ -59,24 +59,24 @@ export default function HowItWorks() {
                         return (
                             <div
                                 key={step.id}
-                                className="relative bg-gray-50/50 rounded-2xl p-8 border border-gray-100 hover:shadow-xl hover:bg-white transition-all duration-300 group flex flex-col justify-between"
+                                className="group relative flex flex-col justify-between rounded-2xl border border-gray-100 bg-gray-50/50 p-8 transition-all duration-300 hover:bg-white hover:shadow-xl dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-900"
                             >
                                 {/* Top Row: Icon & Step Number */}
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="w-12 h-12 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 shadow-sm">
+                                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 shadow-sm transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white dark:text-amber-400">
                                         <IconComponent className="w-6 h-6" />
                                     </div>
-                                    <span className="text-2xl font-black text-gray-200 group-hover:text-amber-500/20 transition-colors">
+                                    <span className="text-2xl font-black text-gray-200 transition-colors group-hover:text-amber-500/20 dark:text-gray-700">
                                         {step.stepNumber}
                                     </span>
                                 </div>
 
                                 {/* Content */}
                                 <div className="space-y-2">
-                                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-amber-600 transition-colors">
+                                    <h3 className="text-xl font-bold text-gray-900 transition-colors group-hover:text-amber-600 dark:text-white dark:group-hover:text-amber-400">
                                         {step.title}
                                     </h3>
-                                    <p className="text-sm text-gray-500 leading-relaxed">
+                                    <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
                                         {step.description}
                                     </p>
                                 </div>

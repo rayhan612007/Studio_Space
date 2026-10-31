@@ -10,26 +10,26 @@ import { Idata } from "../type/Idata";
 
 export default function FeaturedStudios({ data }: { data: Idata[] }) {
     return (
-        <section className="py-16 bg-gray-50/50">
+        <section className="bg-gray-50/50 py-16 dark:bg-gray-950">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Section Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
                     <div>
-                        <span className="text-xs font-semibold uppercase tracking-wider text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:bg-amber-950/60 dark:text-amber-300">
                             Featured Spaces
                         </span>
-                        <h2 className="text-3xl font-bold tracking-tight text-gray-900 mt-2">
+                        <h2 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
                             Explore Top-Rated Studios
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1">
+                        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
                             Discover professional creative environments tailored for your next project.
                         </p>
                     </div>
                     <div className="mt-4 md:mt-0">
                         <Button
                             variant="outline"
-                            className="rounded-full border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-black gap-2"
+                            className="gap-2 rounded-full border-gray-200 text-gray-700 hover:bg-gray-100 hover:text-black dark:border-gray-700 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
 
                         >
                             <Link href="/studios">

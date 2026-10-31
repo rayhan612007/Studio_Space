@@ -49,8 +49,8 @@ export default function Login() {
 
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50/50 px-4 py-12 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-6 bg-white p-8 sm:p-10 rounded-2xl shadow-xl shadow-gray-100 border border-gray-100">
+        <div className="flex min-h-screen items-center justify-center bg-gray-50/50 px-4 py-12 dark:bg-gray-950 sm:px-6 lg:px-8">
+            <div className="w-full max-w-md space-y-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-gray-100 sm:p-10 dark:border-gray-800 dark:bg-gray-900 dark:shadow-black/20">
 
                 {/* Header / Title */}
                 <div className="text-center">
@@ -59,17 +59,17 @@ export default function Login() {
                             <Aperture className="w-6 h-6" />
                         </div>
                     </Link>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+                    <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
                         Welcome Back
                     </h2>
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         Please sign in to your account
                     </p>
                 </div>
 
                 {/* Error Message Alert Box */}
                 {error && (
-                    <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl">
+                    <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" />
                         <span>{error}</span>
                     </div>
@@ -80,11 +80,11 @@ export default function Login() {
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">
-                    <div className="flex-grow border-t border-gray-200"></div>
-                    <span className="flex-shrink mx-4 text-xs text-gray-400 uppercase tracking-wider">
+                    <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                    <span className="mx-4 flex-shrink text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500">
                         Or with email
                     </span>
-                    <div className="flex-grow border-t border-gray-200"></div>
+                    <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
                 </div>
 
                 {/* Login Form */}
@@ -92,11 +92,11 @@ export default function Login() {
 
                     {/* Email Field */}
                     <div className="space-y-1.5">
-                        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             Email
                         </Label>
                         <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
                                 <Mail className="w-4 h-4" />
                             </span>
                             <Input
@@ -106,7 +106,7 @@ export default function Login() {
                                 autoComplete="email"
                                 required
                                 placeholder="name@example.com"
-                                className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white focus-visible:ring-amber-500 rounded-xl"
+                                className="h-11 rounded-xl border-gray-200 bg-gray-50/50 pl-10 text-gray-900 placeholder:text-gray-400 focus:bg-white focus-visible:ring-amber-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                             />
                         </div>
                     </div>
@@ -114,7 +114,7 @@ export default function Login() {
                     {/* Password Field */}
                     <div className="space-y-1.5">
                         <div className="flex items-center justify-between">
-                            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                            <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                                 Password
                             </Label>
                             <Link
@@ -125,7 +125,7 @@ export default function Login() {
                             </Link>
                         </div>
                         <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
                                 <Lock className="w-4 h-4" />
                             </span>
                             <Input
@@ -135,7 +135,7 @@ export default function Login() {
                                 autoComplete="current-password"
                                 required
                                 placeholder="••••••••"
-                                className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white focus-visible:ring-amber-500 rounded-xl"
+                                className="h-11 rounded-xl border-gray-200 bg-gray-50/50 pl-10 text-gray-900 placeholder:text-gray-400 focus:bg-white focus-visible:ring-amber-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                             />
                         </div>
                     </div>
@@ -161,8 +161,8 @@ export default function Login() {
                 </form>
 
                 {/* Link for Register */}
-                <div className="text-center pt-2 border-t border-gray-100">
-                    <p className="text-sm text-gray-600">
+                <div className="border-t border-gray-100 pt-2 text-center dark:border-gray-800">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                         Don&apos;t have an account?{" "}
                         <Link
                             href="/register"

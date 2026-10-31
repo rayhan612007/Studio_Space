@@ -84,8 +84,8 @@ export default function Register() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50/50 px-4 py-12 sm:px-6 lg:px-8">
-            <div className="max-w-md w-full space-y-6 bg-white p-8 sm:p-10 rounded-2xl shadow-xl shadow-gray-100 border border-gray-100">
+        <div className="flex min-h-screen items-center justify-center bg-gray-50/50 px-4 py-12 dark:bg-gray-950 sm:px-6 lg:px-8">
+            <div className="w-full max-w-md space-y-6 rounded-2xl border border-gray-100 bg-white p-8 shadow-xl shadow-gray-100 sm:p-10 dark:border-gray-800 dark:bg-gray-900 dark:shadow-black/20">
 
                 {/* Header / Title */}
                 <div className="text-center">
@@ -94,17 +94,17 @@ export default function Register() {
                             <Aperture className="w-6 h-6" />
                         </div>
                     </Link>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
+                    <h2 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-3xl">
                         Create an Account
                     </h2>
-                    <p className="mt-2 text-sm text-gray-500">
+                    <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
                         Join StudioSpace to book or host creative spaces
                     </p>
                 </div>
 
                 {/* Error Message Alert Box */}
                 {error && (
-                    <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-xl">
+                    <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600 dark:border-red-900 dark:bg-red-950/40 dark:text-red-300">
                         <AlertCircle className="w-4 h-4 flex-shrink-0" />
                         <span>{error}</span>
                     </div>
@@ -115,11 +115,11 @@ export default function Register() {
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">
-                    <div className="flex-grow border-t border-gray-200"></div>
-                    <span className="flex-shrink mx-4 text-xs text-gray-400 uppercase tracking-wider">
+                    <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
+                    <span className="mx-4 flex-shrink text-xs uppercase tracking-wider text-gray-400 dark:text-gray-500">
                         Or register with email
                     </span>
-                    <div className="flex-grow border-t border-gray-200"></div>
+                    <div className="flex-grow border-t border-gray-200 dark:border-gray-700"></div>
                 </div>
 
                 {/* Registration Form */}
@@ -127,11 +127,11 @@ export default function Register() {
 
                     {/* Name Field */}
                     <div className="space-y-1.5">
-                        <Label htmlFor="name" className="text-sm font-medium text-gray-700">
+                        <Label htmlFor="name" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             Full Name
                         </Label>
                         <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
                                 <User className="w-4 h-4" />
                             </span>
                             <Input
@@ -140,18 +140,18 @@ export default function Register() {
                                 type="text"
                                 required
                                 placeholder="John Doe"
-                                className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white focus-visible:ring-amber-500 rounded-xl"
+                                className="h-11 rounded-xl border-gray-200 bg-gray-50/50 pl-10 text-gray-900 placeholder:text-gray-400 focus:bg-white focus-visible:ring-amber-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                             />
                         </div>
                     </div>
 
                     {/* Email Field */}
                     <div className="space-y-1.5">
-                        <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+                        <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             Email Address
                         </Label>
                         <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
                                 <Mail className="w-4 h-4" />
                             </span>
                             <Input
@@ -161,18 +161,18 @@ export default function Register() {
                                 autoComplete="email"
                                 required
                                 placeholder="name@example.com"
-                                className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white focus-visible:ring-amber-500 rounded-xl"
+                                className="h-11 rounded-xl border-gray-200 bg-gray-50/50 pl-10 text-gray-900 placeholder:text-gray-400 focus:bg-white focus-visible:ring-amber-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                             />
                         </div>
                     </div>
 
                     {/* Profile Image URL Field */}
                     <div className="space-y-1.5">
-                        <Label htmlFor="image" className="text-sm font-medium text-gray-700">
-                            Profile Image URL <span className="text-gray-400 font-normal">(Optional)</span>
+                        <Label htmlFor="image" className="text-sm font-medium text-gray-700 dark:text-gray-200">
+                            Profile Image URL <span className="font-normal text-gray-400 dark:text-gray-500">(Optional)</span>
                         </Label>
                         <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
                                 <ImageIcon className="w-4 h-4" />
                             </span>
                             <Input
@@ -180,18 +180,18 @@ export default function Register() {
                                 name="image"
                                 type="url"
                                 placeholder="https://example.com/avatar.jpg"
-                                className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white focus-visible:ring-amber-500 rounded-xl"
+                                className="h-11 rounded-xl border-gray-200 bg-gray-50/50 pl-10 text-gray-900 placeholder:text-gray-400 focus:bg-white focus-visible:ring-amber-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                             />
                         </div>
                     </div>
 
                     {/* Password Field */}
                     <div className="space-y-1.5">
-                        <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+                        <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             Password
                         </Label>
                         <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
                                 <Lock className="w-4 h-4" />
                             </span>
                             <Input
@@ -201,21 +201,21 @@ export default function Register() {
                                 autoComplete="new-password"
                                 required
                                 placeholder="••••••••"
-                                className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white focus-visible:ring-amber-500 rounded-xl"
+                                className="h-11 rounded-xl border-gray-200 bg-gray-50/50 pl-10 text-gray-900 placeholder:text-gray-400 focus:bg-white focus-visible:ring-amber-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                             />
                         </div>
-                        <p className="text-[11px] text-gray-400 mt-1">
+                        <p className="mt-1 text-[11px] text-gray-400 dark:text-gray-500">
                             Must be 8+ characters with uppercase, lowercase, number, and special character.
                         </p>
                     </div>
 
                     {/* Confirm Password Field */}
                     <div className="space-y-1.5">
-                        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+                        <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700 dark:text-gray-200">
                             Confirm Password
                         </Label>
                         <div className="relative">
-                            <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400 dark:text-gray-500">
                                 <Lock className="w-4 h-4" />
                             </span>
                             <Input
@@ -225,7 +225,7 @@ export default function Register() {
                                 autoComplete="new-password"
                                 required
                                 placeholder="••••••••"
-                                className="pl-10 h-11 bg-gray-50/50 border-gray-200 focus:bg-white focus-visible:ring-amber-500 rounded-xl"
+                                className="h-11 rounded-xl border-gray-200 bg-gray-50/50 pl-10 text-gray-900 placeholder:text-gray-400 focus:bg-white focus-visible:ring-amber-500 dark:border-gray-700 dark:bg-gray-800/50 dark:text-gray-100 dark:placeholder:text-gray-500 dark:focus:bg-gray-800"
                             />
                         </div>
                     </div>
@@ -251,8 +251,8 @@ export default function Register() {
                 </form>
 
                 {/* Link for Login */}
-                <div className="text-center pt-2 border-t border-gray-100">
-                    <p className="text-sm text-gray-600">
+                <div className="border-t border-gray-100 pt-2 text-center dark:border-gray-800">
+                    <p className="text-sm text-gray-600 dark:text-gray-400">
                         Already have an account?{" "}
                         <Link
                             href="/login"
