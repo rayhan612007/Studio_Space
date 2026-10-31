@@ -69,7 +69,7 @@ export default function Avatarmenu({ user }) {
 
                     <DropdownMenuItem>
                         <Link
-                            href="/studios/add"
+                            href="/studios/add-studio"
                             className="flex w-full items-center gap-2"
                         >
                             <PlusCircle className="h-4 w-4" />
