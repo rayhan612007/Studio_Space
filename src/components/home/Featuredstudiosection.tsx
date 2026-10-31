@@ -5,66 +5,10 @@ import Link from "next/link";
 import { Star, MapPin, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Studiocard from "./Studiocard";
+import { Idata } from "../type/Idata";
 
-// Dummy Data for Featured Studios (eta pore MongoDB data diye replace kora jabe)
-const dummyStudios = [
-    {
-        _id: "1",
-        title: "Aperture Prime Daylight Studio",
-        category: "Photography",
-        image: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=800&auto=format&fit=crop",
-        hourlyRate: 45,
-        rating: 4.9,
-        location: "Downtown, Dhaka",
-    },
-    {
-        _id: "2",
-        title: "SoundWave Pro Podcast Booth",
-        category: "Podcast & Audio",
-        image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=800&auto=format&fit=crop",
-        hourlyRate: 35,
-        rating: 4.8,
-        location: "Gulshan, Dhaka",
-    },
-    {
-        _id: "3",
-        title: "Canvas & Light Art Loft",
-        category: "Art & Craft",
-        image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?q=80&w=800&auto=format&fit=crop",
-        hourlyRate: 50,
-        rating: 5.0,
-        location: "Panthapath, Dhaka",
-    },
-    {
-        _id: "4",
-        title: "Rhythm Dance & Performance Stage",
-        category: "Dance",
-        image: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?q=80&w=800&auto=format&fit=crop",
-        hourlyRate: 60,
-        rating: 4.7,
-        location: "Banani, Dhaka",
-    },
-    {
-        _id: "5",
-        title: "Cinematic 4K Film Soundstage",
-        category: "Filming",
-        image: "https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?q=80&w=800&auto=format&fit=crop",
-        hourlyRate: 120,
-        rating: 4.9,
-        location: "Tejgaon, Dhaka",
-    },
-    {
-        _id: "6",
-        title: "Minimalist Product Photo Studio",
-        category: "Photography",
-        image: "https://images.unsplash.com/photo-1554048612-b6a482bc67e5?q=80&w=800&auto=format&fit=crop",
-        hourlyRate: 40,
-        rating: 4.6,
-        location: "Dhanmondi, Dhaka",
-    },
-];
 
-export default function FeaturedStudios() {
+export default function FeaturedStudios({ data }: { data: Idata[] }) {
     return (
         <section className="py-16 bg-gray-50/50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,7 +41,7 @@ export default function FeaturedStudios() {
 
                 {/* Studios Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {dummyStudios.map((studio) => (
+                    {data.map((studio) => (
                         <Studiocard key={studio._id} studio={studio} />
                     ))}
                 </div>

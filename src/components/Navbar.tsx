@@ -31,21 +31,18 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("");
 
-  const pathname = usePathname();
 
   // Testing session (Replace with Better Auth session later)
   const { data: session, isPending, error } = authClient.useSession();
   const user = session?.user;
-  console.log(user);
-  const isActiveLink = (href) => {
-    if (href.includes("#")) {
+  const isActiveLink = (href: string) => {
+    if (href) {
       return activeHref === href;
     }
 
-    return pathname === href;
   };
 
-  const handleNavigation = (href) => {
+  const handleNavigation = (href: string) => {
     setActiveHref(href);
     setIsOpen(false);
   };
@@ -151,21 +148,28 @@ export default function Navbar() {
                 {/* Mobile User */}
                 {session ? (
                   <div className="mb-6 flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
-                    <Image
-                      src={user?.image}
-                      width={50}
-                      height={50}
-                      alt={user.name}
-                      className="h-10 w-10 rounded-full object-cover"
-                    />
+                    {session.user?.image ? (
+                      <Image
+                        src={session.user.image}
+                        width={50}
+                        height={50}
+                        alt={session.user.name}
+                        className="h-10 w-10 rounded-full object-cover"
+                      />
+                    ) : (
+                      <div
+                        aria-hidden="true"
+                        className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700"
+                      />
+                    )}
 
                     <div className="flex min-w-0 flex-col">
                       <span className="truncate text-sm font-semibold text-gray-900 dark:text-white">
-                        {user.name}
+                        {session.user.name}
                       </span>
 
                       <span className="truncate text-xs text-gray-500 dark:text-gray-400">
-                        {user.email}
+                        {session.user.email}
                       </span>
                     </div>
                   </div>

@@ -2,16 +2,9 @@ import { Button } from '@base-ui/react';
 import { MapPin, Star } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-export type Tstudio = {
-    "_id": string,
-    "title": string,
-    "category": string,
-    "image": string,
-    "hourlyRate": number,
-    "rating": number,
-    "location": string,
-}
-const Studiocard = ({ studio }: { studio: Tstudio }) => {
+import { Idata } from '../type/Idata';
+
+const Studiocard = ({ studio }: { studio: Idata }) => {
     return (
         <div
             key={studio._id}
@@ -20,7 +13,7 @@ const Studiocard = ({ studio }: { studio: Tstudio }) => {
             {/* Studio Image & Category Badge */}
             <div className="relative h-56 w-full overflow-hidden bg-gray-100">
                 <Image
-                    src={studio.image}
+                    src={studio.imageUrl}
                     alt={studio.title}
                     fill
                     className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -30,7 +23,7 @@ const Studiocard = ({ studio }: { studio: Tstudio }) => {
                 </span>
                 <span className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-xs font-semibold px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
                     <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                    {studio.rating.toFixed(1)}
+                    {studio?.rating || 3.5}
                 </span>
             </div>
 
@@ -58,7 +51,7 @@ const Studiocard = ({ studio }: { studio: Tstudio }) => {
 
                     <Button
                         className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-medium shadow-md shadow-amber-500/20"
-                        size="sm"
+
 
                     >
                         <Link href={`/studios/${studio._id}`}>View Details</Link>
