@@ -2,8 +2,11 @@
 
 import Link from "next/link";
 import { Aperture } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 
 export default function Footer() {
+    const [activeHref, setActiveHref] = useState("");
     return (
         <footer className="border-t border-gray-200 bg-white text-gray-700 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-300">
             <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-8">
@@ -13,13 +16,26 @@ export default function Footer() {
 
                     {/* Brand & Mission Statement (Takes 2 cols on lg) */}
                     <div className="col-span-2 space-y-4 lg:col-span-2">
-                        <Link href="/" className="inline-flex items-center gap-3 group">
-                            <div className="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-white shadow-md shadow-amber-500/20 group-hover:bg-amber-600 transition-all">
-                                <Aperture className="w-6 h-6" />
+                        <Link
+                            href="/"
+                            onClick={() => setActiveHref("")}
+                            className="group flex items-center gap-3"
+                        >
+                            <div className="flex h-10 w-10 items-center justify-center rounded-xl  transition-all">
+                                <Image
+                                    src='/logo.png'
+                                    alt="logo"
+                                    height={50}
+                                    width={50} />
                             </div>
-                            <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                                <span>Studio</span>
-                                <span className="text-amber-500">Space</span>
+
+                            <span className="text-xl font-bold tracking-tight">
+                                <span className="text-black dark:text-white">
+                                    Studio
+                                </span>
+                                <span className="text-purple-600">
+                                    Space
+                                </span>
                             </span>
                         </Link>
 

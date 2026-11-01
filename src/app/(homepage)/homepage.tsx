@@ -3,6 +3,7 @@ import HeroSlider from '@/components/home/Heroslider';
 import React from 'react';
 import Howitwork from './Howstudiowork';
 import About from './Aboutus';
+import Studiocategory from './Studiocategory';
 
 const Homepage = async () => {
     const res = await fetch("http://localhost:7000/featured");
@@ -11,6 +12,7 @@ const Homepage = async () => {
         <div>
             <HeroSlider />
             <FeaturedStudios data={data} />
+            <Studiocategory />
             <Howitwork />
             <About />
         </div>

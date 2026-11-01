@@ -58,15 +58,19 @@ export default function Navbar() {
           onClick={() => setActiveHref("")}
           className="group flex items-center gap-3"
         >
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500 text-white shadow-md transition-all group-hover:bg-amber-600">
-            <Aperture className="h-6 w-6" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl  transition-all">
+            <Image
+              src='/logo.png'
+              alt="logo"
+              height={50}
+              width={50} />
           </div>
 
           <span className="text-xl font-bold tracking-tight">
             <span className="text-black dark:text-white">
               Studio
             </span>
-            <span className="text-amber-500">
+            <span className="text-purple-600">
               Space
             </span>
           </span>
