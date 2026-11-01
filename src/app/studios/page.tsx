@@ -1,3 +1,5 @@
+import StudiosHero from '@/components/Explore hero/Studiohero';
+import Studionav from '@/components/Explore hero/Studionav';
 import React from 'react';
 
 const studios = async () => {
@@ -6,7 +8,8 @@ const studios = async () => {
     console.log(data);
     return (
         <div>
-            stodio
+            <StudiosHero />
+            <Studionav />
         </div>
     );
 };
