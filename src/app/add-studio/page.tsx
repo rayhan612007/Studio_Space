@@ -11,7 +11,8 @@ import {
     CheckSquare,
     Loader2,
     Sparkles,
-    ArrowLeft
+    ArrowLeft,
+    Star
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -26,8 +27,6 @@ const categories = [
     "Podcast Lounge",
     "Music Suite",
     "Workshop",
-    "Art Loft",
-    "Dance Studio",
 ];
 
 const availableAmenities = [
@@ -65,8 +64,7 @@ export default function AddStudioPage() {
         setErrorMessage("");
 
         const formData = new FormData(e.currentTarget);
-        const studioData = Object.fromEntries(formData.entries());
-        console.log(studioData);
+        const studioData = { ...Object.fromEntries(formData.entries()), amenities: selectedAmenities };
 
         try {
             const response = await fetch("http://localhost:7000/add-studios", {
@@ -152,6 +150,7 @@ export default function AddStudioPage() {
                                 <Label className="text-xs text-gray-500 dark:text-gray-400">Host Email (Read-only)</Label>
                                 <Input
                                     type="email"
+                                    name="email"
                                     value={session?.user?.email || ""}
                                     readOnly
                                     className="mt-1 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 cursor-not-allowed font-medium text-gray-700 dark:text-gray-300"
@@ -284,7 +283,25 @@ export default function AddStudioPage() {
                                     name="imageUrl"
                                     type="url"
                                     required
-                                    placeholder="https://images.unsplash.com/..."
+                                    placeholder="paste your imageUrl"
+                                    className="pl-10 h-11 rounded-xl"
+                                />
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="securityDeposit" className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Rating <span className="text-amber-500">*</span>
+                            </Label>
+                            <div className="relative">
+                                <Star className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                <Input
+                                    id="rating"
+                                    name="rating"
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    required
+                                    placeholder="e.g. 10"
                                     className="pl-10 h-11 rounded-xl"
                                 />
                             </div>

@@ -74,7 +74,7 @@ export default function Avatarmenu({ user }: { user: Iuser }) {
 
                     <DropdownMenuItem>
                         <Link
-                            href="/studios/add-studio"
+                            href="/add-studio"
                             className="flex w-full items-center gap-2"
                         >
                             <PlusCircle className="h-4 w-4" />
@@ -83,7 +83,7 @@ export default function Avatarmenu({ user }: { user: Iuser }) {
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Link
-                            href="/studios/add"
+                            href="/my-listings"
                             className="flex w-full items-center gap-2"
                         >
                             <PlusCircle className="h-4 w-4" />
@@ -92,7 +92,7 @@ export default function Avatarmenu({ user }: { user: Iuser }) {
                     </DropdownMenuItem>
                     <DropdownMenuItem>
                         <Link
-                            href="/studios/add"
+                            href="/my-bookings"
                             className="flex w-full items-center gap-2"
                         >
                             <PlusCircle className="h-4 w-4" />

@@ -8,5 +8,7 @@ export interface Idata {
     "location": string,
     "imageUrl": string,
     "overview": string,
-    "rating": string
+    "rating": string,
+    "review": string,
+    "amenities": string[]
 }

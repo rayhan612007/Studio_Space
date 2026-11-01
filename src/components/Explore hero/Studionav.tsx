@@ -27,7 +27,7 @@ const categories = [
     { name: "Sound", value: "sound", icon: AudioLines },
     { name: "Podcast", value: "podcast", icon: Mic },
     { name: "Music", value: "music", icon: Music },
-    { name: "Art", value: "art", icon: Palette },
+    { name: "Workshop", value: "workshop", icon: Palette },
 ];
 const location = [
     { name: "Location", value: "" },

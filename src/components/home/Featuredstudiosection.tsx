@@ -4,8 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Star, MapPin, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import Studiocard from "./Studiocard";
 import { Idata } from "../type/Idata";
+import Studiocard from "../Explore hero/Studiocard";
 
 
 export default function FeaturedStudios({ data }: { data: Idata[] }) {
@@ -42,7 +42,7 @@ export default function FeaturedStudios({ data }: { data: Idata[] }) {
                 {/* Studios Grid */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                     {data.map((studio) => (
-                        <Studiocard key={studio._id} studio={studio} />
+                        <Studiocard key={studio._id} info={studio} />
                     ))}
                 </div>
 
