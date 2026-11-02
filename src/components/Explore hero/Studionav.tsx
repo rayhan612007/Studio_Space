@@ -24,7 +24,7 @@ import {
 const categories = [
     { name: "All", value: "all", icon: LayoutGrid },
     { name: "Photo", value: "photo", icon: Camera },
-    { name: "Sound", value: "sound", icon: AudioLines },
+    { name: "Film stage", value: "film", icon: AudioLines },
     { name: "Podcast", value: "podcast", icon: Mic },
     { name: "Music", value: "music", icon: Music },
     { name: "Workshop", value: "workshop", icon: Palette },

@@ -8,6 +8,7 @@ import { Idata } from "../type/Idata";
 import Studiocard from "../Explore hero/Studiocard";
 
 
+
 export default function FeaturedStudios({ data }: { data: Idata[] }) {
     return (
         <section className="bg-gray-50/50 py-16 dark:bg-gray-950">

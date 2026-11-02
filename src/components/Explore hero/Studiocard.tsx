@@ -15,7 +15,6 @@ import {
   Card,
   CardContent,
 } from "@/components/ui/card";
-
 import { Idata } from "../type/Idata";
 
 export default function Studiocard({ info }: { info: Idata }) {

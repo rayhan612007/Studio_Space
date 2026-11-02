@@ -1,4 +1,5 @@
 
+
 import Studiocard from "@/components/Explore hero/Studiocard";
 import StudiosHero from "@/components/Explore hero/Studiohero";
 import Studionav from "@/components/Explore hero/Studionav";

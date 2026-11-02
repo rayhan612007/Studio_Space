@@ -299,6 +299,7 @@ export default function AddStudioPage() {
                                     name="rating"
                                     type="number"
                                     min="0"
+                                    max="10"
                                     step="0.01"
                                     required
                                     placeholder="e.g. 10"

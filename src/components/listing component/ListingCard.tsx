@@ -1,16 +1,17 @@
 import React from 'react';
 import { Idata } from '../type/Idata';
+import Image from 'next/image';
+import { DeleteList } from '../delete/Deletelist';
+import { UpdateList } from '../delete/Updatelist';
 
 export default function ListingCard({
     item,
-    onUpdate,
-    onDelete
 }: {
     item: Idata;
-    onUpdate?: (item: Idata) => void;
-    onDelete?: (id: string) => void;
 }) {
     const { _id, title, category, hourlyRate, location, imageUrl } = item;
+
+
 
     return (
         <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 flex flex-col justify-between overflow-hidden">
@@ -18,9 +19,11 @@ export default function ListingCard({
             {/* --- Image Section (Optional if you have imageUrl) --- */}
             {imageUrl && (
                 <div className="relative h-48 w-full overflow-hidden bg-gray-100">
-                    <img
+                    <Image
                         src={imageUrl}
                         alt={title}
+                        height={50}
+                        width={50}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute top-3 left-3">
@@ -69,24 +72,11 @@ export default function ListingCard({
 
             {/* --- Action Buttons --- */}
             <div className="px-5 pb-5 pt-2 flex items-center gap-3 bg-gray-50/50 border-t border-gray-100">
-                <button
-                    onClick={() => onUpdate && onUpdate(item)}
-                    className="flex-1 bg-white hover:bg-indigo-50 text-indigo-600 border border-indigo-200 hover:border-indigo-300 text-sm font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 text-center shadow-2xs flex items-center justify-center gap-2"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                    </svg>
-                    Update
-                </button>
-                <button
-                    onClick={() => onDelete && onDelete(_id)}
-                    className="flex-1 bg-white hover:bg-red-50 text-red-600 border border-red-200 hover:border-red-300 text-sm font-semibold py-2.5 px-4 rounded-xl transition-all duration-200 text-center shadow-2xs flex items-center justify-center gap-2"
-                >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    Delete
-                </button>
+
+                <UpdateList id={_id} />
+
+                <DeleteList id={_id}  />
+
             </div>
         </div>
     );
