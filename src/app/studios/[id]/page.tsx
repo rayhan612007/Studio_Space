@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import {
     ArrowLeft,
-    ArrowUpRight,
     MapPin,
     Users,
     Star,
@@ -12,11 +11,9 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-    Card,
-    CardContent,
-} from "@/components/ui/card";
-import { Idata } from "@/components/type/Idata";
+import BookingSidebar from "@/components/bookingaside/Bookingaside";
+import Bookingaside from "@/components/bookingaside/Bookingaside";
+
 
 const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
@@ -44,7 +41,7 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
                 <p className="mt-2 text-muted-foreground">
                     This workspace may have been removed or is unavailable.
                 </p>
-                <Button className="mt-5 rounded-xl">
+                <Button className="mt-5 rounded-xl" >
                     <Link href="/studios">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Back to Studios
@@ -202,108 +199,35 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
                                 </div>
                             </div>
                         </section>
+
+                        {/* Amenities */}
                         <section>
-                            <h2 className="text-2xl font-bold">
+                            <h2 className="text-2xl font-bold mb-3">
                                 Amenities
                             </h2>
-                            <div className="px-4 py-3 text-xs font-medium rounded-xl border text-left transition-all bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-100">
-                                <div className=" flex flex-wrap gap-2">
-
+                            <div className="px-4 py-3 text-xs font-medium rounded-xl border text-left transition-all bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
+                                <div className="flex flex-wrap gap-2">
                                     {
                                         studio?.amenities?.map((item: string, ind: number) => (
-                                            <p
+                                            <span
                                                 key={ind}
-                                                className="bg-purple-700 text-white dark:text-purple-600 dark:bg-whie w-fit px-3 py-2 rounded-4xl"
-
+                                                className="bg-purple-700 text-white dark:text-purple-300 dark:bg-purple-950/60 w-fit px-3 py-1.5 rounded-full text-xs font-medium"
                                             >
                                                 {item}
-                                            </p>
+                                            </span>
                                         ))
                                     }
                                 </div>
                             </div>
-
                         </section>
                     </div>
 
-                    {/* Booking Sidebar */}
-                    <aside className="lg:col-span-1">
-                        <Card className="rounded-2xl shadow-sm lg:sticky lg:top-24">
-                            <CardContent className="space-y-5 p-6">
+                    {/* Booking Sidebar Component */}
+                    <Bookingaside studio={studio} />
 
-                                <div>
-                                    <p className="text-sm text-muted-foreground">
-                                        Starting from
-                                    </p>
-
-                                    <h2 className="mt-1 text-3xl font-bold">
-                                        ${studio.hourlyRate}
-                                        <span className="ml-1 text-sm font-normal text-muted-foreground">
-                                            / hour
-                                        </span>
-                                    </h2>
-                                </div>
-
-                                <div className="space-y-4 rounded-xl bg-muted/50 p-4">
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">
-                                            Category
-                                        </span>
-                                        <span className="font-medium">
-                                            {studio.category}
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">
-                                            Capacity
-                                        </span>
-                                        <span className="font-medium">
-                                            {studio.maxCapacity} People
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span className="text-muted-foreground">
-                                            Security Deposit
-                                        </span>
-                                        <span className="font-medium">
-                                            ${studio.securityDeposit}
-                                        </span>
-                                    </div>
-
-                                    <div className="flex items-center justify-between border-t pt-3 text-sm">
-                                        <span className="text-muted-foreground">
-                                            Booking Type
-                                        </span>
-                                        <span className="font-medium">
-                                            Hourly
-                                        </span>
-                                    </div>
-                                </div>
-
-                                <Button
-                                    className="h-12 w-full rounded-xl text-base font-semibold"
-
-                                >
-                                    Book Workspace Now
-                                    <ArrowUpRight className="ml-2 h-4 w-4" />
-                                </Button>
-
-                                <p className="text-center text-xs text-muted-foreground">
-                                    Booking functionality will be available soon.
-                                </p>
-
-                                <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">
-                                    <ShieldCheck className="h-4 w-4" />
-                                    Workspace information
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </aside>
                 </div>
-            </div >
-        </main >
+            </div>
+        </main>
     );
 };
 

@@ -1,6 +1,5 @@
 "use client"
 
-import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -13,12 +12,8 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "../ui/toast"
-import { useRouter } from "next/navigation"
 
 export function DeleteList({ id }: { id: string }) {
-    const [open, setOpen] = useState(false)
-    const router = useRouter()
-
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault()
         try {
@@ -26,20 +21,17 @@ export function DeleteList({ id }: { id: string }) {
                 method: 'DELETE',
             })
             if (res.ok) {
-
                 toast.add({ title: "Successfully deleted listing!", type: "success" })
-                setOpen(false)
+                // Page complete reload korar jonno
+                window.location.reload()
             }
         } catch (error) {
             console.error("Error ", error)
         }
-        finally {
-            router.refresh()
-        }
     }
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
+        <Dialog>
             <DialogTrigger >
                 <Button variant="destructive">Delete Listing</Button>
             </DialogTrigger>
