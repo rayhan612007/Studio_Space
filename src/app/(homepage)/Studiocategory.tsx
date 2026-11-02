@@ -9,8 +9,8 @@ import {
     Music,
     Palette,
     ArrowRight,
-    Sparkles,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const categories = [
     {
@@ -59,38 +59,29 @@ export default function Studiocategory() {
     return (
         <section className="w-full overflow-hidden bg-base-100 py-16">
             <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div className="grid items-center gap-10 lg:grid-cols-[190px_1fr]">
+                <div className="grid items-center gap-8 lg:grid-cols-[230px_1fr] lg:gap-10">
                     {/* Left Content */}
                     <div className="relative z-10 space-y-5">
-                        <div className="flex items-center gap-2">
-                            <span className="text-sm font-semibold text-base-content">
-                                Studio Categories
-                            </span>
-                            <ArrowRight />
-                        </div>
-
-                        <h2 className="text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl">
-                            Explore
-                            <span className="block bg-gradient-to-r from-violet-600 to-purple-400 bg-clip-text text-transparent">
-                                Studios
-                            </span>
+                        <span className="section-kicker">Studio categories</span>
+                        <h2 className="section-heading">
+                            Find your kind of space
                         </h2>
-
-                        <p className="text-sm leading-6 text-base-content/65">
+                        <p className="section-description">
                             Discover and book the perfect space for your creative projects.
                         </p>
 
-                        <Link
-                            href="/studios"
-                            className="btn btn-primary btn-sm rounded-full gap-2 shadow-lg shadow-primary/20"
+                        <Button
+                            render={<Link href="/studios" />}
+                            nativeButton={false}
+                            size="default"
                         >
                             Browse All Studios
                             <ArrowRight size={16} />
-                        </Link>
+                        </Button>
                     </div>
 
                     {/* Category Cards */}
-                    <div className="flex gap-3 overflow-x-auto px-2 py-4 scrollbar-hide lg:overflow-visible">
+                    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
 
                         {categories.map((category) => {
                             const Icon = category.icon;
@@ -100,11 +91,7 @@ export default function Studiocategory() {
                                     key={category.slug}
                                     href={`/studios?category=${category.slug}`}
                                     aria-label={`Explore ${category.name}`}
-                                    className="group relative h-[255px] min-w-[145px] flex-1 overflow-hidden rounded-xl border border-base-content/10 bg-base-300 shadow-md transition-all duration-500 hover:-translate-y-2 hover:shadow-xl hover:shadow-primary/20"
-                                    style={{
-                                        clipPath:
-                                            "polygon(15% 0, 100% 0, 85% 100%, 0 100%)",
-                                    }}
+                                    className="group relative h-56 overflow-hidden rounded-2xl border border-base-content/10 bg-base-300 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:h-64"
                                 >
                                     {/* Background Image */}
                                     <div
@@ -122,7 +109,7 @@ export default function Studiocategory() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
 
                                     {/* Card Content */}
-                                    <div className="absolute inset-x-0 bottom-0 flex items-end justify-around p-4">
+                                    <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-4">
 
                                         <div className="min-w-0">
                                             <Icon

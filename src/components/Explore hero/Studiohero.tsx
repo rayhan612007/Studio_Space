@@ -23,21 +23,21 @@ export default function StudiosHero() {
                 <div className="max-w-xl space-y-3">
 
                     {/* Badge */}
-                    <div className="inline-flex items-center gap-2 rounded-full border border-white/5 bg-white/10 px-3 py-1.5 text-xs font-medium text-purple-300 backdrop-blur-md">
-                        <Sparkles size={13} className="fill-purple-400" />
+                    <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1.5 text-xs font-medium text-violet-200 backdrop-blur-md">
+                    <Sparkles size={13} className="fill-violet-300" />
                         Discover Our Spaces
                     </div>
 
                     {/* Heading */}
-                    <h1 className="text-4xl font-extrabold leading-none tracking-tight text-white sm:text-5xl">
+                    <h1 className="page-heading text-white">
                         Our{" "}
-                        <span className="bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 bg-clip-text text-transparent">
+                        <span className="bg-gradient-to-r from-violet-200 via-violet-400 to-violet-300 bg-clip-text text-transparent">
                             Studios
                         </span>
                     </h1>
 
                     {/* Description */}
-                    <p className="text-sm text-gray-300 sm:text-base">
+                    <p className="page-description text-white/80">
                         Find and book the perfect workspace for your creative projects.
                     </p>
 

@@ -32,42 +32,40 @@ const supportFeatures = [
 
 export default function About() {
     return (
-        <section className="bg-gray-50/50 py-20 dark:bg-gray-950" id="about">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="bg-muted/40 py-16 sm:py-20" id="about">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
                 {/* Section Header */}
-                <div className="text-center max-w-2xl mx-auto mb-16">
-                    <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-amber-600 dark:bg-amber-950/60 dark:text-amber-300">
-                        Trust & Safety
-                    </span>
-                    <h2 className="mt-3 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+                <div className="mx-auto mb-12 max-w-2xl text-center sm:mb-14">
+                    <span className="section-kicker">Trust &amp; safety</span>
+                    <h2 className="section-heading">
                         Host Guarantee & Creator Support
                     </h2>
-                    <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+                    <p className="section-description mx-auto">
                         We safeguard your space, your equipment, and your creative journey with industry-leading protections.
                     </p>
                 </div>
 
                 {/* Dynamic Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6">
                     {supportFeatures.map((feature) => {
                         const IconComponent = feature.icon;
                         return (
                             <div
                                 key={feature.id}
-                                className="group flex flex-col justify-between rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:shadow-xl dark:border-gray-800 dark:bg-gray-900"
+                                className="group flex flex-col justify-between rounded-2xl border border-border/70 bg-card p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl sm:p-7"
                             >
                                 <div>
                                     {/* Icon Box */}
-                                    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600 shadow-sm transition-all duration-300 group-hover:bg-amber-500 group-hover:text-white dark:text-amber-400">
+                                    <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm transition-all duration-300 group-hover:bg-primary group-hover:text-primary-foreground">
                                         <IconComponent className="w-6 h-6" />
                                     </div>
 
                                     {/* Title & Description */}
-                                    <h3 className="mb-2 text-xl font-bold text-gray-900 transition-colors group-hover:text-amber-600 dark:text-white dark:group-hover:text-amber-400">
+                                    <h3 className="mb-2 text-lg font-bold text-foreground transition-colors group-hover:text-primary sm:text-xl">
                                         {feature.title}
                                     </h3>
-                                    <p className="text-sm leading-relaxed text-gray-500 dark:text-gray-400">
+                                    <p className="text-sm leading-7 text-muted-foreground">
                                         {feature.description}
                                     </p>
                                 </div>

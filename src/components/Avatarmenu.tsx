@@ -20,27 +20,29 @@ import {
     AvatarImage,
 } from "@/components/ui/avatar";
 import { authClient } from "@/lib/auth-client";
-import { redirect } from "next/navigation";
-import { Idata } from "./type/Idata";
+import { useRouter } from "next/navigation";
 interface Iuser {
     "email": string,
     "image": string
     "name": string
 }
 export default function Avatarmenu({ user }: { user: Iuser }) {
+    const router = useRouter();
+    const avatarName = user.name.trim().charAt(0).toUpperCase() || "U";
+    const avatarImage = user.image.trim();
     const handlelogout = async () => {
         await authClient.signOut({
         });
-        redirect("/")
+        router.push("/");
     }
     return (
         <DropdownMenu>
-            <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-amber-500">
-                <Avatar className="h-10 w-10 cursor-pointer border-2 border-amber-500">
-                    <AvatarImage src={user?.image} alt={user?.name} />
+            <DropdownMenuTrigger className="rounded-full outline-none focus-visible:ring-2 focus-visible:ring-primary">
+                <Avatar className="h-10 w-10 cursor-pointer border-2 border-primary">
+                    {avatarImage && <AvatarImage src={avatarImage} alt={user.name} />}
 
-                    <AvatarFallback>
-                        {user?.name?.charAt(0) || "U"}
+                    <AvatarFallback className="text-sm font-semibold text-primary">
+                        {avatarName}
                     </AvatarFallback>
                 </Avatar>
             </DropdownMenuTrigger>
@@ -105,7 +107,7 @@ export default function Avatarmenu({ user }: { user: Iuser }) {
 
                 <DropdownMenuItem
                     onClick={handlelogout}
-                    className="cursor-pointer text-red-500 focus:text-red-500"
+                    className="cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive"
                 >
                     <LogOut className="mr-2 h-4 w-4" />
                     Log out

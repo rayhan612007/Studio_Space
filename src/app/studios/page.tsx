@@ -8,13 +8,14 @@ import { Idata } from "@/components/type/Idata";
 interface StudiosProps {
     searchParams: Promise<{
         category?: string;
+        sort?: string;
     }>;
 }
 
 const Studios = async ({ searchParams }: StudiosProps) => {
     let data: Idata[] = [];
 
-    const { category = "all" } = await searchParams;
+    const { category = "all", sort = "default" } = await searchParams;
 
     try {
         const res = await fetch("http://localhost:7000/studios", {
@@ -38,16 +39,35 @@ const Studios = async ({ searchParams }: StudiosProps) => {
             ?.toLowerCase()
             .includes(category.toLowerCase());
     });
+    const sortedData = [...filteredData];
+
+    if (sort === "low" || sort === "high") {
+        sortedData.sort((first, second) => {
+            const firstRate = Number(first.hourlyRate.replace(/[^\d.-]/g, ""));
+            const secondRate = Number(second.hourlyRate.replace(/[^\d.-]/g, ""));
+            const firstIsValid = Number.isFinite(firstRate);
+            const secondIsValid = Number.isFinite(secondRate);
+
+            if (!firstIsValid || !secondIsValid) {
+                if (firstIsValid === secondIsValid) return 0;
+                return firstIsValid ? -1 : 1;
+            }
+
+            return sort === "low"
+                ? firstRate - secondRate
+                : secondRate - firstRate;
+        });
+    }
 
     return (
         <div>
             <StudiosHero />
             <Studionav />
 
-            <section className="container mx-auto px-4 py-10">
-                {filteredData.length > 0 ? (
-                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {filteredData.map((info) => (
+            <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+                {sortedData.length > 0 ? (
+                    <div className="studio-grid">
+                        {sortedData.map((info) => (
                             <Studiocard
                                 key={info._id}
                                 info={info}

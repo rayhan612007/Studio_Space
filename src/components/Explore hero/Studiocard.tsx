@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   Users,
   ShieldCheck,
+  ImageOff,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
@@ -19,17 +20,23 @@ import { Idata } from "../type/Idata";
 
 export default function Studiocard({ info }: { info: Idata }) {
   return (
-    <Card className="group overflow-hidden rounded-2xl border border-border/60 bg-card p-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl">
+    <Card className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card p-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl">
 
       {/* Image Section */}
-      <div className="relative h-56 overflow-hidden bg-muted">
-        <Image
-          src={info.imageUrl}
-          alt={info.title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover transition-transform duration-700 group-hover:scale-110"
-        />
+      <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+        {info.imageUrl ? (
+          <Image
+            src={info.imageUrl}
+            alt={info.title}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/15 via-muted to-accent">
+            <ImageOff className="size-10 text-muted-foreground/60" />
+          </div>
+        )}
 
         {/* Image Overlay */}
         <div className="absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/10" />
@@ -52,16 +59,16 @@ export default function Studiocard({ info }: { info: Idata }) {
         </div>
       </div>
 
-      <CardContent className="space-y-5 p-5">
+      <CardContent className="flex flex-1 flex-col gap-5 p-5">
 
         {/* Title & Overview */}
-        <div className="space-y-2">
+        <div className="min-h-[5.25rem] space-y-2">
           <h3 className="line-clamp-1 text-xl font-bold tracking-tight transition-colors group-hover:text-primary">
             {info.title}
           </h3>
 
-          <p className="line-clamp-2 min-h-10 text-sm leading-5 text-muted-foreground">
-            {info.overview}
+          <p className="line-clamp-2 text-sm leading-6 text-muted-foreground">
+            {info.overview || "A thoughtfully equipped space for your next creative project."}
           </p>
         </div>
 
@@ -89,7 +96,7 @@ export default function Studiocard({ info }: { info: Idata }) {
         </div>
 
         {/* Price & Action */}
-        <div className="flex items-center justify-between gap-3 border-t border-border/70 pt-4">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/70 pt-4">
           <div>
             <p className="text-xs font-medium text-muted-foreground">
               Starting from
@@ -103,11 +110,13 @@ export default function Studiocard({ info }: { info: Idata }) {
             </p>
           </div>
 
-          <Button className="rounded-xl px-4 shadow-sm">
-            <Link href={`/studios/${info._id}`}>
-              View Details
-              <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-            </Link>
+          <Button
+            render={<Link href={`/studios/${info._id}`} />}
+            nativeButton={false}
+            className="h-10 rounded-xl px-4 shadow-sm"
+          >
+            View details
+            <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Button>
         </div>
 

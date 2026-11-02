@@ -10,5 +10,7 @@ export interface Idata {
     "overview": string,
     "rating": string,
     "review": string,
-    "amenities": string[]
+    "amenities": string[],
+    "email"?: string,
+    "hostName"?: string
 }

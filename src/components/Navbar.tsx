@@ -4,11 +4,16 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
-import { Menu, Aperture, LogOut } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from "@/components/ui/avatar";
 import {
   Sheet,
   SheetContent,
@@ -30,16 +35,16 @@ const navLinks = [
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeHref, setActiveHref] = useState("");
-
-
-  // Testing session (Replace with Better Auth session later)
-  const { data: session, isPending, error } = authClient.useSession();
+  const pathname = usePathname();
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
   const user = session?.user;
   const isActiveLink = (href: string) => {
-    if (href) {
-      return activeHref === href;
+    if (href.startsWith("/#")) {
+      return pathname === "/" && activeHref === href;
     }
-
+    if (href === "/") return pathname === "/";
+    return pathname === href || pathname.startsWith(`${href}/`);
   };
 
   const handleNavigation = (href: string) => {
@@ -47,8 +52,14 @@ export default function Navbar() {
     setIsOpen(false);
   };
 
+  const handleLogout = async () => {
+    await authClient.signOut();
+    setIsOpen(false);
+    router.push("/");
+  };
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md dark:border-gray-800 dark:bg-gray-950/80">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md">
 
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 
@@ -60,17 +71,19 @@ export default function Navbar() {
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-xl  transition-all">
             <Image
-              src='/logo.png'
-              alt="logo"
-              height={50}
-              width={50} />
+              src="/logo.png"
+              alt=""
+              height={40}
+              width={40}
+              className="h-10 w-10 object-contain"
+            />
           </div>
 
           <span className="text-xl font-bold tracking-tight">
-            <span className="text-black dark:text-white">
+            <span className="text-foreground">
               Studio
             </span>
-            <span className="text-purple-600">
+            <span className="text-primary">
               Space
             </span>
           </span>
@@ -87,14 +100,14 @@ export default function Navbar() {
                 href={link.href}
                 onClick={() => setActiveHref(link.href)}
                 className={`relative py-2 text-sm font-medium transition-colors ${isActive
-                  ? "font-semibold text-black dark:text-white"
-                  : "text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white"
+                  ? "font-semibold text-primary"
+                  : "text-muted-foreground hover:text-foreground"
                   }`}
               >
                 {link.name}
 
                 {isActive && (
-                  <span className="absolute bottom-0 left-0 h-[3px] w-full rounded-full bg-amber-500" />
+                  <span className="absolute bottom-0 left-0 h-[3px] w-full rounded-full bg-primary" />
                 )}
               </Link>
             );
@@ -105,20 +118,26 @@ export default function Navbar() {
         <div className="hidden items-center gap-3 md:flex">
           <ThemeToggle />
 
-          {session ? (
-            <Avatarmenu user={user} />
+          {user ? (
+            <Avatarmenu
+              user={{
+                email: user.email,
+                name: user.name,
+                image: user.image ?? "",
+              }}
+            />
           ) : (
             <>
               <Link
                 href="/login"
-                className="inline-flex h-10 items-center justify-center rounded-full border border-gray-200 px-6 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900"
+                className="inline-flex h-10 items-center justify-center rounded-xl border border-border px-5 text-sm font-medium text-foreground transition hover:bg-muted"
               >
                 Login
               </Link>
 
               <Link
                 href="/register"
-                className="inline-flex h-10 items-center justify-center rounded-full bg-amber-500 px-6 text-sm font-medium text-white shadow-md shadow-amber-500/20 transition hover:bg-amber-600"
+                className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90"
               >
                 Register
               </Link>
@@ -134,7 +153,7 @@ export default function Navbar() {
             {/* Sheet Trigger */}
             <SheetTrigger
               aria-label="Open navigation menu"
-              className="inline-flex h-10 w-10 items-center justify-center rounded-md text-gray-700 transition hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-900"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-xl text-foreground transition hover:bg-muted"
             >
               <Menu className="h-6 w-6" />
             </SheetTrigger>
@@ -149,49 +168,49 @@ export default function Navbar() {
               </SheetTitle>
 
               <div>
+                <Link
+                  href="/"
+                  onClick={() => handleNavigation("/")}
+                  className="mb-6 flex items-center gap-3"
+                >
+                  <Image
+                    src="/logo.png"
+                    alt=""
+                    width={40}
+                    height={40}
+                    className="h-10 w-10 object-contain"
+                  />
+                  <span className="text-lg font-bold tracking-tight">
+                    Studio<span className="text-primary">Space</span>
+                  </span>
+                </Link>
+
                 {/* Mobile User */}
                 {session ? (
-                  <div className="mb-6 flex items-center gap-3 rounded-xl bg-gray-50 p-3 dark:bg-gray-900">
-                    {session.user?.image ? (
-                      <Image
-                        src={session.user.image}
-                        width={50}
-                        height={50}
-                        alt={session.user.name}
-                        className="h-10 w-10 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div
-                        aria-hidden="true"
-                        className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700"
-                      />
-                    )}
+                  <div className="mb-6 flex items-center gap-3 rounded-xl bg-muted p-3">
+                    <Avatar className="h-10 w-10 border-2 border-primary">
+                      {session.user.image && (
+                        <AvatarImage
+                          src={session.user.image}
+                          alt={session.user.name}
+                        />
+                      )}
+                      <AvatarFallback className="text-sm font-semibold text-primary">
+                        {session.user.name.trim().charAt(0).toUpperCase() || "U"}
+                      </AvatarFallback>
+                    </Avatar>
 
                     <div className="flex min-w-0 flex-col">
-                      <span className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                      <span className="truncate text-sm font-semibold text-foreground">
                         {session.user.name}
                       </span>
 
-                      <span className="truncate text-xs text-gray-500 dark:text-gray-400">
+                      <span className="truncate text-xs text-muted-foreground">
                         {session.user.email}
                       </span>
                     </div>
                   </div>
-                ) : (
-                  <Link
-                    href="/"
-                    onClick={() => handleNavigation("/")}
-                    className="mb-8 flex items-center gap-3"
-                  >
-                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-500 text-white">
-                      <Aperture className="h-5 w-5" />
-                    </div>
-
-                    <span className="text-lg font-bold">
-                      Studio<span className="text-amber-500">Space</span>
-                    </span>
-                  </Link>
-                )}
+                ) : null}
 
                 {/* Mobile Navigation */}
                 <nav className="flex flex-col gap-2">
@@ -203,9 +222,9 @@ export default function Navbar() {
                         key={link.name}
                         href={link.href}
                         onClick={() => handleNavigation(link.href)}
-                        className={`rounded-lg px-4 py-2.5 text-base font-medium transition-colors ${isActive
-                          ? "bg-amber-50 font-semibold text-amber-600 dark:bg-amber-950/40 dark:text-amber-400"
-                          : "text-gray-600 hover:bg-gray-100 hover:text-black dark:text-gray-400 dark:hover:bg-gray-900 dark:hover:text-white"
+                        className={`rounded-xl px-4 py-3 text-base font-medium transition-colors ${isActive
+                          ? "bg-primary/10 font-semibold text-primary"
+                          : "text-muted-foreground hover:bg-muted hover:text-foreground"
                           }`}
                       >
                         {link.name}
@@ -216,22 +235,22 @@ export default function Navbar() {
               </div>
 
               {/* Mobile Footer Actions */}
-              <div className="flex flex-col gap-3 border-t border-gray-100 pt-6 dark:border-gray-800">
+              <div className="flex flex-col gap-3 border-t border-border pt-6">
 
-                {session ? (
+                {user ? (
                   <>
                     <Link
                       href="/dashboard"
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900"
+                      className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground transition hover:bg-muted"
                     >
                       Dashboard
                     </Link>
 
                     <Link
-                      href="/studios/add"
+                      href="/add-studio"
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center rounded-xl border border-gray-300 px-4 text-sm font-medium text-gray-700 transition hover:bg-gray-50 dark:border-gray-800 dark:text-gray-300 dark:hover:bg-gray-900"
+                      className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground transition hover:bg-muted"
                     >
                       Add New Studio
                     </Link>
@@ -239,7 +258,7 @@ export default function Navbar() {
                     <Button
                       variant="destructive"
                       className="w-full justify-start gap-2 rounded-xl"
-                      onClick={() => setIsOpen(false)}
+                      onClick={handleLogout}
                     >
                       <LogOut className="h-4 w-4" />
                       Log out
@@ -250,7 +269,7 @@ export default function Navbar() {
                     <Link
                       href="/login"
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center justify-center rounded-full border border-gray-300 text-sm font-medium text-gray-700 dark:border-gray-800 dark:text-gray-300"
+                      className="inline-flex h-11 items-center justify-center rounded-xl border border-border text-sm font-medium text-foreground transition hover:bg-muted"
                     >
                       Login
                     </Link>
@@ -258,7 +277,7 @@ export default function Navbar() {
                     <Link
                       href="/register"
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center justify-center rounded-full bg-amber-500 text-sm font-medium text-white hover:bg-amber-600"
+                      className="inline-flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90"
                     >
                       Register
                     </Link>

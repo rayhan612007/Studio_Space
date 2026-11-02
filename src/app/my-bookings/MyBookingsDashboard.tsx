@@ -6,6 +6,7 @@ import BookingCard, {
     type BookingRecord,
     type BookingStatus,
 } from "@/components/bookingaside/Bookingcard";
+import { STUDIO_API_URL } from "@/lib/studio-api";
 import {
     BookingEmptyState,
     BookingErrorState,
@@ -125,9 +126,10 @@ export default function MyBookingsDashboard() {
 
         async function loadBookings() {
             try {
-                const response = await fetch("/api/bookings", {
+                const response = await fetch(`${STUDIO_API_URL}/bookings`, {
                     signal: controller.signal,
                     cache: "no-store",
+                    credentials: "include",
                 });
                 if (!response.ok) {
                     throw new Error(await getErrorMessage(response));
@@ -204,7 +206,7 @@ export default function MyBookingsDashboard() {
                                 No {filter.toLowerCase()} bookings found.
                             </p>
                         ) : (
-                            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-3">
                                 {visibleBookings.map((booking, index) => (
                                     <BookingCard
                                         key={

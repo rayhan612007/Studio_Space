@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import type { BookingRecord } from "@/components/bookingaside/Bookingcard";
+import { STUDIO_API_URL } from "@/lib/studio-api";
 import {
     DashboardHeader,
     DashboardStats,
@@ -25,9 +26,10 @@ export default function DashboardOverview({ userName }: DashboardOverviewProps) 
 
         async function loadBookings() {
             try {
-                const response = await fetch("/api/bookings", {
+                const response = await fetch(`${STUDIO_API_URL}/bookings`, {
                     cache: "no-store",
                     signal: controller.signal,
+                    credentials: "include",
                 });
 
                 if (!response.ok) {

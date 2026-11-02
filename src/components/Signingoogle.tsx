@@ -1,6 +1,6 @@
 'use client'
 import { authClient } from '@/lib/auth-client';
-import { Button } from '@base-ui/react';
+import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
 
@@ -30,10 +30,11 @@ const Signingoogle = () => {
         <div>
             <div>
                 <Button
+                    variant="outline"
                     type="button"
                     disabled={googleLoading}
                     onClick={handleGoogleSignIn}
-                    className="flex h-11 w-full items-center justify-center gap-3 rounded-xl border-gray-200 font-medium text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:text-black dark:border-gray-700 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 dark:hover:text-white"
+                    className="h-11 w-full gap-3 border-border bg-background text-foreground shadow-sm hover:bg-muted"
                 >
                     {googleLoading ? (
                         <Loader2 className="w-5 h-5 animate-spin text-gray-500" />

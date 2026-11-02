@@ -40,6 +40,7 @@ function RecentBookingsHeader() {
                 variant="outline"
                 size="sm"
                 render={<Link href="/my-bookings" />}
+                nativeButton={false}
                 className="shrink-0 gap-1.5"
             >
                 View all
@@ -69,6 +70,7 @@ function RecentBookingsEmpty() {
             <Button
                 variant="link"
                 render={<Link href="/studios" />}
+                nativeButton={false}
                 className="mt-2"
             >
                 Explore studios

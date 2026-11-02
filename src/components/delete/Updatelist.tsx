@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import {
     Building2,
     Users,
@@ -28,7 +28,6 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useSession } from "@/app/lib/auth-client"
 import { Idata } from "../type/Idata"
-import { redirect } from "next/navigation"
 import { toast } from "../ui/toast"
 
 // Mock options (Replace or pass via props as needed)
@@ -55,13 +54,6 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
     }
 
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>(() => parseAmenities(initialdata?.amenities))
-
-    // Keep state synced if initialdata changes dynamically
-    useEffect(() => {
-        if (initialdata?.amenities) {
-            setSelectedAmenities(parseAmenities(initialdata.amenities))
-        }
-    }, [initialdata])
 
     const handleAmenityToggle = (amenity: string) => {
         setSelectedAmenities((prev) =>
@@ -132,7 +124,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                             <Input
                                 type="email"
                                 name="email"
-                                value={session?.user?.email || initialdata?.hostEmail || ""}
+                                value={session?.user?.email || initialdata?.email || ""}
                                 readOnly
                                 className="mt-1 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 cursor-not-allowed font-medium text-gray-700 dark:text-gray-300"
                             />
@@ -142,7 +134,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                     {/* Studio Title */}
                     <div className="space-y-2">
                         <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Studio Title <span className="text-amber-500">*</span>
+                            Studio Title <span className="text-primary">*</span>
                         </Label>
                         <div className="relative">
                             <Building2 className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
@@ -161,14 +153,14 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="category" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Category <span className="text-amber-500">*</span>
+                                Category <span className="text-primary">*</span>
                             </Label>
                             <select
                                 id="category"
                                 name="category"
                                 required
                                 defaultValue={initialdata?.category || ""}
-                                className="w-full h-11 px-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 dark:text-gray-100"
+                                className="w-full h-11 px-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary text-gray-900 dark:text-gray-100"
                             >
                                 <option value="">Select category...</option>
                                 {categories.map((cat) => (
@@ -179,7 +171,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
 
                         <div className="space-y-2">
                             <Label htmlFor="maxCapacity" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Max Capacity (Persons) <span className="text-amber-500">*</span>
+                                Max Capacity (Persons) <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
                                 <Users className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
@@ -201,7 +193,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="hourlyRate" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Hourly Rate ($) <span className="text-amber-500">*</span>
+                                Hourly Rate ($) <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
                                 <DollarSign className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
@@ -221,7 +213,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
 
                         <div className="space-y-2">
                             <Label htmlFor="securityDeposit" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Security Deposit ($) <span className="text-amber-500">*</span>
+                                Security Deposit ($) <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
                                 <DollarSign className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
@@ -243,7 +235,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                     {/* Location / Address */}
                     <div className="space-y-2">
                         <Label htmlFor="location" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Location / Address <span className="text-amber-500">*</span>
+                            Location / Address <span className="text-primary">*</span>
                         </Label>
                         <div className="relative">
                             <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
@@ -262,7 +254,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="imageUrl" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Image URL <span className="text-amber-500">*</span>
+                                Image URL <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
                                 <ImageIcon className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
@@ -280,7 +272,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
 
                         <div className="space-y-2">
                             <Label htmlFor="rating" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Rating <span className="text-amber-500">*</span>
+                                Rating <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
                                 <Star className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
@@ -303,23 +295,22 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                     {/* Amenities Checkboxes */}
                     <div className="space-y-2">
                         <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                            <CheckSquare className="w-4 h-4 text-amber-500" /> Amenities List
+                            <CheckSquare className="w-4 h-4 text-primary" /> Amenities List
                         </Label>
                         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
                             {availableAmenities.map((amenity) => {
                                 const isChecked = selectedAmenities.includes(amenity)
                                 return (
-                                    <button
+                                    <Button
                                         key={amenity}
                                         type="button"
+                                        size="sm"
+                                        variant={isChecked ? "default" : "outline"}
                                         onClick={() => handleAmenityToggle(amenity)}
-                                        className={`px-3 py-2 text-xs font-medium rounded-xl border text-left transition-all ${isChecked
-                                            ? "bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-500/20"
-                                            : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-100"
-                                            }`}
+                                        className="h-auto min-h-9 w-full justify-start whitespace-normal text-left"
                                     >
                                         {amenity}
-                                    </button>
+                                    </Button>
                                 )
                             })}
                         </div>
@@ -328,7 +319,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                     {/* Detailed Overview */}
                     <div className="space-y-2">
                         <Label htmlFor="overview" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                            Detailed Overview <span className="text-amber-500">*</span>
+                            Detailed Overview <span className="text-primary">*</span>
                         </Label>
                         <Textarea
                             id="overview"
@@ -350,7 +341,6 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-medium shadow-lg shadow-amber-500/25 transition-all"
                         >
                             {loading ? (
                                 <>

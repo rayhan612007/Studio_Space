@@ -1,7 +1,6 @@
 
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -52,8 +51,6 @@ const slides = [
 ];
 
 export default function HeroSlider() {
-    const [activeIndex, setActiveIndex] = useState(0);
-
     return (
         <section className="relative w-full overflow-hidden">
             <Swiper
@@ -73,14 +70,11 @@ export default function HeroSlider() {
                     prevEl: ".hero-prev",
                     nextEl: ".hero-next",
                 }}
-                onSlideChange={(swiper) =>
-                    setActiveIndex(swiper.realIndex)
-                }
                 className="hero-swiper"
             >
                 {slides.map((slide) => (
                     <SwiperSlide key={slide.id}>
-                        <div className="relative flex min-h-[600px] items-center md:min-h-[700px]">
+                        <div className="relative flex min-h-[520px] items-center sm:min-h-[600px] lg:min-h-[660px]">
 
                             {/* Background Image */}
                             <Image
@@ -96,13 +90,13 @@ export default function HeroSlider() {
                             <div className="absolute inset-0 bg-black/55" />
 
                             {/* Content */}
-                            <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-24 text-white md:px-12">
+                            <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-20 text-white sm:px-8 md:px-12">
 
                                 <span className="mb-6 inline-block rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[3px] backdrop-blur-md">
                                     {slide.tag}
                                 </span>
 
-                                <h1 className="max-w-3xl text-4xl font-bold leading-tight tracking-tight md:text-6xl lg:text-7xl">
+                                <h1 className="max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
                                     {slide.title}
                                 </h1>
 
@@ -114,25 +108,22 @@ export default function HeroSlider() {
                                 <div className="mt-9 flex flex-wrap gap-4">
 
                                     <Button
-
+                                        render={<Link href="/studios" />}
+                                        nativeButton={false}
                                         size="lg"
-                                        className="rounded-full bg-amber-500 px-7 text-white hover:text-black hover:bg-gray-300 "
                                     >
-                                        <Link href="/studios" className="flex">
-                                            Explore Studios
-                                            <ArrowUpRight className="ml-2 h-5 w-5" />
-                                        </Link>
+                                        Explore Studios
+                                        <ArrowUpRight className="ml-2 h-5 w-5" />
                                     </Button>
 
                                     <Button
-
+                                        render={<Link href="/add-studio" />}
+                                        nativeButton={false}
                                         size="lg"
                                         variant="outline"
-                                        className="rounded-full border-white bg-transparent px-7 text-white hover:bg-amber-500 hover:text-white"
+                                        className="h-11 rounded-xl border-white/50 bg-white/10 px-6 text-white backdrop-blur-sm hover:bg-white hover:text-gray-950"
                                     >
-                                        <Link href="/studios">
-                                            Host Your Space
-                                        </Link>
+                                        Host Your Space
                                     </Button>
 
                                 </div>

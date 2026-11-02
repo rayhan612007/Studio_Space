@@ -48,7 +48,7 @@ export function DeleteList({ id }: { id: string }) {
                         <DialogClose >
                             <Button type="button" variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button className="bg-red-700 hover:bg-red-800 text-white" type="submit">
+                        <Button variant="destructive" type="submit">
                             Delete
                         </Button>
                     </DialogFooter>

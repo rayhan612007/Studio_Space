@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { STUDIO_API_URL } from "@/lib/studio-api";
 import {
     Card,
     CardContent,
@@ -185,8 +186,8 @@ function CancelBookingAction({
 
         try {
             const response = await fetch(
-                `/api/bookings/${encodeURIComponent(bookingId)}`,
-                { method: "PATCH" },
+                `${STUDIO_API_URL}/bookings/${encodeURIComponent(bookingId)}`,
+                { method: "PATCH", credentials: "include" },
             );
             if (!response.ok) {
                 const result: unknown = await response.json().catch(() => null);
@@ -312,6 +313,7 @@ export default function BookingCard({ booking, onBookingCancelled }: BookingCard
                     size="sm"
                     variant="outline"
                     render={<Link href={details.studioUrl} />}
+                    nativeButton={false}
                 >
                     View studio
                 </Button>

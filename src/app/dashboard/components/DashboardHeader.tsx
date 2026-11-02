@@ -19,16 +19,17 @@ export default function DashboardHeader({ userName }: { userName: string }) {
                         <Sparkles className="size-3.5" />
                         Your StudioSpace
                     </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                    <h1 className="page-heading">
                         Welcome back, {firstName}
                     </h1>
-                    <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">
+                    <p className="page-description">
                         Pick up where you left off: manage your reservations or share a
                         space of your own.
                     </p>
                 </div>
                 <Button
                     render={<Link href="/add-studio" />}
+                    nativeButton={false}
                     className="h-11 shrink-0 gap-2 rounded-xl px-5 shadow-sm"
                 >
                     <Plus className="size-4" />

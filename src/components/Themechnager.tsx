@@ -7,18 +7,19 @@ import { Button } from "@/components/ui/button";
 export default function ThemeToggle() {
     const { setTheme, resolvedTheme, systemTheme } = useTheme();
     const currentTheme = resolvedTheme ?? systemTheme ?? "light";
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
 
     return (
         <Button
             variant="ghost"
             size="icon"
-            onClick={() => setTheme(currentTheme === "dark" ? "light" : "dark")}
-            className="h-10 w-10 rounded-xl border border-gray-200 text-gray-700 transition-colors hover:bg-gray-100 dark:border-gray-800 dark:text-gray-200 dark:hover:bg-gray-800"
-            aria-label={`Switch to ${currentTheme === "dark" ? "light" : "dark"} theme`}
-            title={`Switch to ${currentTheme === "dark" ? "light" : "dark"} theme`}
+            onClick={() => setTheme(nextTheme)}
+            className="h-10 w-10 rounded-xl border border-border text-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+            aria-label={`Switch to ${nextTheme} theme`}
+            title={`Switch to ${nextTheme} theme`}
         >
-            <Sun className="hidden h-5 w-5 text-amber-400 dark:block" aria-hidden="true" />
-            <Moon className="h-5 w-5 text-gray-700 dark:hidden" aria-hidden="true" />
+            <Sun className="hidden h-5 w-5 text-primary dark:block" aria-hidden="true" />
+            <Moon className="h-5 w-5 dark:hidden" aria-hidden="true" />
         </Button>
     );
 }

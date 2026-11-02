@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
+import { STUDIO_API_URL } from "@/lib/studio-api";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -72,8 +73,9 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
         setError(null);
 
         try {
-            const response = await fetch("/api/bookings", {
+            const response = await fetch(`${STUDIO_API_URL}/bookings`, {
                 method: "POST",
+                credentials: "include",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     studio,
@@ -123,7 +125,11 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
                         Your request for {studio.title} is saved. You can follow its status from your bookings.
                     </CardDescription>
                     <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row">
-                        <Button render={<Link href="/my-bookings" />} className="flex-1">
+                        <Button
+                            render={<Link href="/my-bookings" />}
+                            nativeButton={false}
+                            className="flex-1"
+                        >
                             View my bookings
                         </Button>
                         <Button
@@ -197,7 +203,11 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
                         <p className="mt-1 text-sm text-muted-foreground">
                             Your booking will be linked to your account.
                         </p>
-                        <Button render={<Link href={loginHref} />} className="mt-4 gap-2">
+                        <Button
+                            render={<Link href={loginHref} />}
+                            nativeButton={false}
+                            className="mt-4 gap-2"
+                        >
                             <LogIn className="size-4" />
                             Sign in to continue
                         </Button>

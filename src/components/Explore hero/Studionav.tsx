@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
     LayoutGrid,
     Camera,
@@ -10,7 +10,6 @@ import {
     Mic,
     Music,
     Palette,
-    MapPin,
 } from "lucide-react";
 
 import {
@@ -29,18 +28,40 @@ const categories = [
     { name: "Music", value: "music", icon: Music },
     { name: "Workshop", value: "workshop", icon: Palette },
 ];
-const location = [
-    { name: "Location", value: "" },
-    { name: "Dhaka", value: "Dhaka" },
-    { name: "Bogura", value: "Bogura" },
-    { name: "Faridpur", value: "Faridpur" },
-    { name: "Pabna", value: "Pabna" }
-
-];
 
 export default function Studionav() {
     const searchParams = useSearchParams();
+    const pathname = usePathname();
+    const router = useRouter();
     const activeCategory = searchParams.get("category") || "all";
+    const activeSort = searchParams.get("sort") || "default";
+
+    const getCategoryHref = (category: string) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        if (category === "all") {
+            params.delete("category");
+        } else {
+            params.set("category", category);
+        }
+
+        const query = params.toString();
+        return query ? `/studios?${query}` : "/studios";
+    };
+
+    const handleSortChange = (value: string | null) => {
+        if (!value) return;
+
+        const params = new URLSearchParams(searchParams.toString());
+        if (value === "default") {
+            params.delete("sort");
+        } else {
+            params.set("sort", value);
+        }
+
+        const query = params.toString();
+        router.push(query ? `${pathname}?${query}` : pathname);
+    };
 
     return (
         <section className="w-full border-b border-base-content/10 bg-base-100 py-4">
@@ -60,11 +81,7 @@ export default function Studionav() {
                             return (
                                 <Link
                                     key={category.value}
-                                    href={
-                                        category.value === "all"
-                                            ? "/studios"
-                                            : `/studios?category=${category.value}`
-                                    }
+                                    href={getCategoryHref(category.value)}
                                     className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-300 ${isActive
                                         ? "bg-primary text-primary-content shadow-lg shadow-primary/20"
                                         : "text-base-content/70 hover:bg-base-content/10 hover:text-base-content"
@@ -81,26 +98,14 @@ export default function Studionav() {
                 {/* Right Filters */}
                 <div className="flex items-center justify-center gap-2 lg:justify-self-end">
 
-                    {/* Location */}
-                    <Select defaultValue="all">
-                        <SelectTrigger className="h-10 w-[145px] rounded-xl border-base-content/10 bg-base-200/60 text-xs shadow-none">
-                            <SelectValue placeholder="Location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {location.map((item, ind) => (
-                                <SelectItem key={ind} value={item.value}>
-                                    {item.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
 
                     {/* Price Sorting */}
-                    <Select defaultValue="low">
+                    <Select value={activeSort} onValueChange={handleSortChange}>
                         <SelectTrigger className="h-10 w-[145px] rounded-xl border-base-content/10 bg-base-200/60 text-xs shadow-none">
                             <SelectValue placeholder="Sort by price" />
                         </SelectTrigger>
                         <SelectContent>
+                            <SelectItem value="default">Default order</SelectItem>
                             <SelectItem value="low">Price: Low to High</SelectItem>
                             <SelectItem value="high">Price: High to Low</SelectItem>
                         </SelectContent>

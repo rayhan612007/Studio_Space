@@ -1,6 +1,7 @@
 import React from 'react';
 import { Idata } from '../type/Idata';
 import Image from 'next/image';
+import { ImageOff, MapPin } from 'lucide-react';
 import { DeleteList } from '../delete/Deletelist';
 import { UpdateList } from '../delete/Updatelist';
 
@@ -14,69 +15,48 @@ export default function ListingCard({
 
 
     return (
-        <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl hover:border-indigo-100 transition-all duration-300 flex flex-col justify-between overflow-hidden">
-
-            {/* --- Image Section (Optional if you have imageUrl) --- */}
-            {imageUrl && (
-                <div className="relative h-48 w-full overflow-hidden bg-gray-100">
+        <div className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card text-card-foreground shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-xl">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+                {imageUrl ? (
                     <Image
                         src={imageUrl}
                         alt={title}
-                        height={50}
-                        width={50}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute top-3 left-3">
-                        <span className="text-xs font-semibold px-3 py-1 bg-white/90 backdrop-blur-md text-indigo-600 rounded-full shadow-sm uppercase tracking-wider">
-                            {category}
-                        </span>
-                    </div>
-                </div>
-            )}
-
-            <div className="p-5 flex flex-col flex-grow">
-                {/* Fallback Category if image is not present */}
-                {!imageUrl && (
-                    <div className="flex justify-between items-start mb-3">
-                        <span className="text-xs font-semibold px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full uppercase tracking-wider">
-                            {category}
-                        </span>
+                ) : (
+                    <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/15 via-muted to-accent">
+                        <ImageOff className="size-10 text-muted-foreground/60" />
                     </div>
                 )}
+                <span className="absolute left-4 top-4 rounded-full border border-white/30 bg-black/45 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-white backdrop-blur-md">
+                    {category}
+                </span>
+            </div>
 
-                {/* Title / Name */}
-                <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-1">
+            <div className="flex flex-1 flex-col p-5">
+                <h3 className="mb-2 line-clamp-1 text-lg font-bold text-foreground transition-colors group-hover:text-primary">
                     {title}
                 </h3>
 
-                {/* Location (Optional check) */}
-                {location && (
-                    <p className="text-xs text-gray-500 flex items-center gap-1 mb-4">
-                        <svg className="w-3.5 h-3.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        {location}
-                    </p>
-                )}
+                <p className="mb-4 flex min-h-5 items-center gap-1.5 text-xs text-muted-foreground">
+                    <MapPin className="size-3.5 shrink-0" />
+                    {location || "Location not provided"}
+                </p>
 
-                {/* Hourly Rate */}
-                <div className="mt-auto pt-3 flex items-baseline justify-between border-t border-gray-50">
-                    <span className="text-xs text-gray-400 font-medium uppercase tracking-wider">Price</span>
+                <div className="mt-auto flex items-baseline justify-between border-t border-border pt-3">
+                    <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Price</span>
                     <div className="text-right">
-                        <span className="text-xl font-extrabold text-gray-900">${hourlyRate}</span>
-                        <span className="text-xs font-medium text-gray-500 ml-1">/ hour</span>
+                        <span className="text-xl font-extrabold text-foreground">${hourlyRate}</span>
+                        <span className="ml-1 text-xs font-medium text-muted-foreground">/ hour</span>
                     </div>
                 </div>
             </div>
 
-            {/* --- Action Buttons --- */}
-            <div className="px-5 pb-5 pt-2 flex items-center gap-3 bg-gray-50/50 border-t border-gray-100">
-
+            <div className="flex items-center gap-3 border-t border-border bg-muted/40 px-5 py-3">
                 <UpdateList id={_id} initialdata={item} />
-
                 <DeleteList id={_id} />
-
             </div>
         </div>
     );

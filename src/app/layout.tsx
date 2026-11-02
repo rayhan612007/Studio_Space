@@ -32,7 +32,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider
-          attribute="class"
+          attribute={["class", "data-theme"]}
+          value={{ light: "light", dark: "dark" }}
           defaultTheme="system"
           enableSystem
           enableColorScheme

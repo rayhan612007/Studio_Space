@@ -11,7 +11,6 @@ import {
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import BookingSidebar from "@/components/bookingaside/Bookingaside";
 import Bookingaside from "@/components/bookingaside/Bookingaside";
 
 
@@ -72,7 +71,7 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
 
                     <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
                         <div className="space-y-2">
-                            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                            <h1 className="page-heading">
                                 {studio.title}
                             </h1>
 
@@ -126,7 +125,7 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
 
                         {/* Overview */}
                         <section className="space-y-3">
-                            <h2 className="text-2xl font-bold">
+                            <h2 className="text-2xl font-bold tracking-tight text-foreground">
                                 About this workspace
                             </h2>
 
@@ -137,7 +136,7 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
 
                         {/* Specifications */}
                         <section className="space-y-4">
-                            <h2 className="text-2xl font-bold">
+                            <h2 className="text-2xl font-bold tracking-tight text-foreground">
                                 Workspace specifications
                             </h2>
 
@@ -202,16 +201,16 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
 
                         {/* Amenities */}
                         <section>
-                            <h2 className="text-2xl font-bold mb-3">
+                            <h2 className="mb-3 text-2xl font-bold tracking-tight text-foreground">
                                 Amenities
                             </h2>
-                            <div className="px-4 py-3 text-xs font-medium rounded-xl border text-left transition-all bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700">
+                            <div className="rounded-xl border border-border bg-muted/50 px-4 py-3 text-left text-xs font-medium text-foreground transition-all">
                                 <div className="flex flex-wrap gap-2">
                                     {
                                         studio?.amenities?.map((item: string, ind: number) => (
                                             <span
                                                 key={ind}
-                                                className="bg-purple-700 text-white dark:text-purple-300 dark:bg-purple-950/60 w-fit px-3 py-1.5 rounded-full text-xs font-medium"
+                                                className="w-fit rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary"
                                             >
                                                 {item}
                                             </span>

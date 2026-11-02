@@ -39,15 +39,16 @@ export function BookingHeader() {
                         <Sparkles className="size-3.5" />
                         Your creative spaces
                     </Badge>
-                    <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                    <h1 className="page-heading">
                         My bookings
                     </h1>
-                    <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base">
+                    <p className="page-description">
                         Every session, in one place. Review reservation details and manage upcoming bookings.
                     </p>
                 </div>
                 <Button
                     render={<Link href="/studios" />}
+                    nativeButton={false}
                     className="h-11 shrink-0 gap-2 rounded-xl px-5 shadow-sm"
                 >
                     <Compass className="size-4" />
@@ -190,7 +191,11 @@ export function BookingEmptyState() {
             <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
                 Find a space that sparks an idea and your reservations will show up here.
             </p>
-            <Button render={<Link href="/studios" />} className="mt-6 gap-2 rounded-xl">
+            <Button
+                render={<Link href="/studios" />}
+                nativeButton={false}
+                className="mt-6 gap-2 rounded-xl"
+            >
                 <Compass className="size-4" />
                 Find a studio
             </Button>

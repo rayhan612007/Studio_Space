@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
+import { STUDIO_API_URL } from "@/lib/studio-api";
 
 const categories = [
     "Photo Studio",
@@ -63,11 +64,22 @@ export default function AddStudioPage() {
         setLoading(true);
         setErrorMessage("");
 
+        const userEmail = session?.user?.email?.trim().toLowerCase();
+        if (!userEmail) {
+            setErrorMessage("Sign in before creating a studio listing.");
+            setLoading(false);
+            return;
+        }
+
         const formData = new FormData(e.currentTarget);
-        const studioData = { ...Object.fromEntries(formData.entries()), amenities: selectedAmenities };
+        const studioData = {
+            ...Object.fromEntries(formData.entries()),
+            amenities: selectedAmenities,
+            email: userEmail,
+        };
 
         try {
-            const response = await fetch("http://localhost:7000/add-studios", {
+            const response = await fetch(`${STUDIO_API_URL}/add-studios`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(studioData),
@@ -85,7 +97,9 @@ export default function AddStudioPage() {
                 router.refresh();
             }, 1200);
         } catch (err) {
-            setErrorMessage(err.message || "Something went wrong.");
+            setErrorMessage(
+                err instanceof Error ? err.message : "Something went wrong.",
+            );
             setLoading(false);
         }
     };
@@ -93,42 +107,42 @@ export default function AddStudioPage() {
     if (sessionLoading) {
         return (
             <div className="min-h-[70vh] flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-amber-500" />
+                <Loader2 className="w-8 h-8 animate-spin text-primary" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50/50 dark:bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-muted/40 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
             <div className="max-w-3xl mx-auto">
 
                 {/* Back Button & Header */}
                 <div className="mb-8">
                     <Link
                         href="/my-listings"
-                        className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-black dark:text-gray-400 dark:hover:text-white mb-4 transition-colors"
+                        className="mb-4 inline-flex items-center gap-2 text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
                         <ArrowLeft className="w-4 h-4" /> Back to My Listings
                     </Link>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-3">
-                        <Sparkles className="w-8 h-8 text-amber-500" /> Add New Studio Space
+                    <h1 className="page-heading flex items-center gap-3">
+                        <Sparkles className="size-7 shrink-0 text-primary" /> Add New Studio Space
                     </h1>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="page-description">
                         Fill in the details below to list your creative studio for booking.
                     </p>
                 </div>
 
                 {/* Form Card */}
-                <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-xl p-8">
+                <div className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-8">
 
                     {successMessage && (
-                        <div className="mb-6 p-4 text-sm font-medium text-emerald-700 bg-emerald-50 dark:bg-emerald-950/50 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+                        <div className="mb-6 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm font-medium text-emerald-700 dark:text-emerald-300">
                             {successMessage}
                         </div>
                     )}
 
                     {errorMessage && (
-                        <div className="mb-6 p-4 text-sm font-medium text-red-700 bg-red-50 dark:bg-red-950/50 dark:text-red-300 border border-red-200 dark:border-red-800 rounded-xl">
+                        <div className="mb-6 rounded-xl border border-destructive/20 bg-destructive/5 p-4 text-sm font-medium text-destructive">
                             {errorMessage}
                         </div>
                     )}
@@ -136,35 +150,35 @@ export default function AddStudioPage() {
                     <form onSubmit={handleSubmit} className="space-y-6">
 
                         {/* Read-Only User Info Section */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-100 dark:border-gray-800">
+                        <div className="grid grid-cols-1 gap-4 rounded-xl border border-border bg-muted/50 p-4 sm:grid-cols-2">
                             <div>
-                                <Label className="text-xs text-gray-500 dark:text-gray-400">Host Name (Read-only)</Label>
+                                <Label className="text-xs text-muted-foreground">Host Name (Read-only)</Label>
                                 <Input
                                     type="text"
                                     value={session?.user?.name || ""}
                                     readOnly
-                                    className="mt-1 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 cursor-not-allowed font-medium text-gray-700 dark:text-gray-300"
+                                    className="mt-1 cursor-not-allowed border-border bg-muted font-medium text-muted-foreground"
                                 />
                             </div>
                             <div>
-                                <Label className="text-xs text-gray-500 dark:text-gray-400">Host Email (Read-only)</Label>
+                                <Label className="text-xs text-muted-foreground">Host Email (Read-only)</Label>
                                 <Input
                                     type="email"
                                     name="email"
                                     value={session?.user?.email || ""}
                                     readOnly
-                                    className="mt-1 bg-gray-100 dark:bg-gray-800 border-gray-200 dark:border-gray-700 cursor-not-allowed font-medium text-gray-700 dark:text-gray-300"
+                                    className="mt-1 cursor-not-allowed border-border bg-muted font-medium text-muted-foreground"
                                 />
                             </div>
                         </div>
 
                         {/* Studio Title */}
                         <div className="space-y-2">
-                            <Label htmlFor="title" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Studio Title <span className="text-amber-500">*</span>
+                            <Label htmlFor="title" className="text-sm font-medium text-foreground">
+                                Studio Title <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
-                                <Building2 className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                <Building2 className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="title"
                                     name="title"
@@ -178,14 +192,14 @@ export default function AddStudioPage() {
                         {/* Category & Max Capacity */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="category" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Category <span className="text-amber-500">*</span>
+                                <Label htmlFor="category" className="text-sm font-medium text-foreground">
+                                    Category <span className="text-primary">*</span>
                                 </Label>
                                 <select
                                     id="category"
                                     name="category"
                                     required
-                                    className="w-full h-11 px-3 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 text-gray-900 dark:text-gray-100"
+                                    className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
                                 >
                                     <option value="">Select category...</option>
                                     {categories.map((cat) => (
@@ -195,11 +209,11 @@ export default function AddStudioPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="maxCapacity" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Max Capacity (Persons) <span className="text-amber-500">*</span>
+                                <Label htmlFor="maxCapacity" className="text-sm font-medium text-foreground">
+                                    Max Capacity (Persons) <span className="text-primary">*</span>
                                 </Label>
                                 <div className="relative">
-                                    <Users className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                    <Users className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                     <Input
                                         id="maxCapacity"
                                         name="maxCapacity"
@@ -216,11 +230,11 @@ export default function AddStudioPage() {
                         {/* Hourly Rate & Security Deposit */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label htmlFor="hourlyRate" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Hourly Rate ($) <span className="text-amber-500">*</span>
+                                <Label htmlFor="hourlyRate" className="text-sm font-medium text-foreground">
+                                    Hourly Rate ($) <span className="text-primary">*</span>
                                 </Label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                    <DollarSign className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                     <Input
                                         id="hourlyRate"
                                         name="hourlyRate"
@@ -235,11 +249,11 @@ export default function AddStudioPage() {
                             </div>
 
                             <div className="space-y-2">
-                                <Label htmlFor="securityDeposit" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                    Security Deposit ($) <span className="text-amber-500">*</span>
+                                <Label htmlFor="securityDeposit" className="text-sm font-medium text-foreground">
+                                    Security Deposit ($) <span className="text-primary">*</span>
                                 </Label>
                                 <div className="relative">
-                                    <DollarSign className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                    <DollarSign className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                     <Input
                                         id="securityDeposit"
                                         name="securityDeposit"
@@ -256,11 +270,11 @@ export default function AddStudioPage() {
 
                         {/* Location / Address */}
                         <div className="space-y-2">
-                            <Label htmlFor="location" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Location / Address <span className="text-amber-500">*</span>
+                            <Label htmlFor="location" className="text-sm font-medium text-foreground">
+                                Location / Address <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
-                                <MapPin className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                <MapPin className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="location"
                                     name="location"
@@ -273,11 +287,11 @@ export default function AddStudioPage() {
 
                         {/* Image URL */}
                         <div className="space-y-2">
-                            <Label htmlFor="imageUrl" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Image URL <span className="text-amber-500">*</span>
+                            <Label htmlFor="imageUrl" className="text-sm font-medium text-foreground">
+                                Image URL <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
-                                <ImageIcon className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                <ImageIcon className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="imageUrl"
                                     name="imageUrl"
@@ -289,11 +303,11 @@ export default function AddStudioPage() {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="securityDeposit" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Rating <span className="text-amber-500">*</span>
+                            <Label htmlFor="rating" className="text-sm font-medium text-foreground">
+                                Rating <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
-                                <Star className="absolute left-3 top-3.5 w-4 h-4 text-gray-400" />
+                                <Star className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     id="rating"
                                     name="rating"
@@ -310,24 +324,23 @@ export default function AddStudioPage() {
 
                         {/* Amenities Checkboxes */}
                         <div className="space-y-2">
-                            <Label className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                <CheckSquare className="w-4 h-4 text-amber-500" /> Amenities List
+                            <Label className="flex items-center gap-2 text-sm font-medium text-foreground">
+                                <CheckSquare className="h-4 w-4 text-primary" /> Amenities List
                             </Label>
                             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                                 {availableAmenities.map((amenity) => {
                                     const isChecked = selectedAmenities.includes(amenity);
                                     return (
-                                        <button
+                                        <Button
                                             key={amenity}
                                             type="button"
+                                            size="sm"
+                                            variant={isChecked ? "default" : "outline"}
                                             onClick={() => handleAmenityToggle(amenity)}
-                                            className={`px-3 py-2 text-xs font-medium rounded-xl border text-left transition-all ${isChecked
-                                                ? "bg-amber-500 text-white border-amber-500 shadow-sm shadow-amber-500/20"
-                                                : "bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:bg-gray-100"
-                                                }`}
+                                            className="h-auto min-h-9 w-full justify-start whitespace-normal text-left"
                                         >
                                             {amenity}
-                                        </button>
+                                        </Button>
                                     );
                                 })}
                             </div>
@@ -335,8 +348,8 @@ export default function AddStudioPage() {
 
                         {/* Detailed Overview */}
                         <div className="space-y-2">
-                            <Label htmlFor="overview" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                                Detailed Overview <span className="text-amber-500">*</span>
+                            <Label htmlFor="overview" className="text-sm font-medium text-foreground">
+                                Detailed Overview <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
                                 <Textarea
@@ -354,7 +367,7 @@ export default function AddStudioPage() {
                         <Button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-12 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-medium shadow-lg shadow-amber-500/25 transition-all text-base"
+                            className="h-12 w-full text-base shadow-sm"
                         >
                             {loading ? (
                                 <>
