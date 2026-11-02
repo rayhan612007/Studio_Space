@@ -24,12 +24,17 @@ export default function Login() {
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
+        const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
+        const callbackURL =
+            requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+                ? requestedCallback
+                : "/";
 
         try {
-            const { data, error } = await authClient.signIn.email({
+            const { error } = await authClient.signIn.email({
                 email,
                 password,
-                callbackURL: "/",
+                callbackURL,
             });
 
             if (error) {
@@ -38,9 +43,9 @@ export default function Login() {
                 return;
             }
 
-            router.push("/");
+            router.push(callbackURL);
             router.refresh();
-        } catch (err) {
+        } catch {
             setError("An unexpected error occurred.");
             setLoading(false);
         }

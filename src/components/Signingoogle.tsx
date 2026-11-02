@@ -10,13 +10,18 @@ const Signingoogle = () => {
     const handleGoogleSignIn = async () => {
         setGoogleLoading(true);
         setError("");
+        const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
+        const callbackURL =
+            requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+                ? requestedCallback
+                : "/";
 
         try {
             await authClient.signIn.social({
                 provider: "google",
-                callbackURL: "/",
+                callbackURL,
             });
-        } catch (err) {
+        } catch {
             setError("Could not connect to Google sign-in.");
             setGoogleLoading(false);
         }
@@ -57,6 +62,11 @@ const Signingoogle = () => {
                     )}
                 </Button>
             </div>
+            {error && (
+                <p role="alert" className="mt-2 text-sm text-red-600 dark:text-red-400">
+                    {error}
+                </p>
+            )}
         </div>
     );
 };

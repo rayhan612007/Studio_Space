@@ -1,254 +1,289 @@
 "use client";
 
 import { useState } from "react";
-import { Calendar, Clock, User, Mail, Phone, Loader2, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+    AlertCircle,
+    CalendarDays,
+    CheckCircle2,
+    Clock3,
+    LoaderCircle,
+    LogIn,
+    MapPin,
+    ShieldCheck,
+    Users,
+} from "lucide-react";
+
 import { authClient } from "@/lib/auth-client";
-import { Idata } from "../type/Idata";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import type { Idata } from "../type/Idata";
+
+function formatPrice(value: string) {
+    const amount = Number(value.replace(/[^\d.-]/g, ""));
+    if (!Number.isFinite(amount)) return value;
+
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        maximumFractionDigits: 2,
+    }).format(amount);
+}
 
 export default function Bookingaside({ studio }: { studio: Idata }) {
+    const { data: session, isPending: sessionPending } = authClient.useSession();
+    const pathname = usePathname();
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
-    const { data: session } = authClient.useSession();
+    const [error, setError] = useState<string | null>(null);
+    const today = new Date().toISOString().slice(0, 10);
+    const signedIn = Boolean(session?.user);
+    const loginHref = `/login?callbackURL=${encodeURIComponent(pathname || "/studios")}`;
 
-    const name = session?.user?.name;
-    const Email = session?.user?.email;
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        if (!signedIn || loading) return;
 
-    // Default to today's date (YYYY-MM-DD)
-    const today = new Date().toISOString().split("T")[0];
+        const form = event.currentTarget;
+        const formData = new FormData(form);
+        const bookingDate = String(formData.get("bookingDate") ?? "");
+        const startTime = String(formData.get("startTime") ?? "");
+        const endTime = String(formData.get("endTime") ?? "");
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        if (startTime >= endTime) {
+            setError("Choose an end time that is later than the start time.");
+            return;
+        }
+
         setLoading(true);
+        setError(null);
 
-        // Extract values directly using FormData
-        const formData = new FormData(e.currentTarget);
-        const bookingDetails = { ...Object.fromEntries(formData.entries()), studio };
+        try {
+            const response = await fetch("/api/bookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    studio,
+                    bookingDate,
+                    startTime,
+                    endTime,
+                    notes: String(formData.get("notes") ?? ""),
+                }),
+            });
 
-        const res = await fetch("http://localhost:7000/my-bookings", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(bookingDetails)
-        })
+            if (!response.ok) {
+                const result: unknown = await response.json().catch(() => null);
+                const message =
+                    typeof result === "object" &&
+                    result !== null &&
+                    "error" in result &&
+                    typeof result.error === "string"
+                        ? result.error
+                        : "We couldn’t create your booking. Please try again.";
+                throw new Error(message);
+            }
 
-
-
-
-        setLoading(false);
-        setSubmitted(true);
-    };
+            setSubmitted(true);
+        } catch (requestError) {
+            setError(
+                requestError instanceof Error
+                    ? requestError.message
+                    : "We couldn’t create your booking. Please try again.",
+            );
+        } finally {
+            setLoading(false);
+        }
+    }
 
     if (submitted) {
         return (
-            <div className="max-w-lg mx-auto h-fit sticky p-8 bg-white lg:w-md w-lg dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800 text-center space-y-4">
-                <div className="flex justify-center">
-                    <CheckCircle2 className="w-16 h-16 text-emerald-500 animate-bounce" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Booking Confirmed!</h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400">
-                    Thank you for your reservation.
-                </p>
-                <button
-                    onClick={() => setSubmitted(false)}
-                    className="mt-4 px-6 py-2.5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-medium rounded-xl hover:opacity-90 transition-opacity"
-                >
-                    Book Another Slot
-                </button>
-            </div>
+            <Card className="mx-auto h-fit w-full max-w-md text-center shadow-lg">
+                <CardContent className="flex flex-col items-center px-6 py-10">
+                    <span className="mb-5 rounded-full bg-emerald-500/10 p-4 text-emerald-600 dark:text-emerald-400">
+                        <CheckCircle2 className="size-9" />
+                    </span>
+                    <Badge variant="outline" className="mb-3 border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                        Pending confirmation
+                    </Badge>
+                    <CardTitle className="text-2xl">Booking request sent</CardTitle>
+                    <CardDescription className="mt-2 max-w-sm leading-6">
+                        Your request for {studio.title} is saved. You can follow its status from your bookings.
+                    </CardDescription>
+                    <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row">
+                        <Button render={<Link href="/my-bookings" />} className="flex-1">
+                            View my bookings
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={() => setSubmitted(false)}
+                            className="flex-1"
+                        >
+                            Book another slot
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
         );
     }
 
     return (
-        <div className="max-w-md mx-auto p-6  h-fit bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-100 dark:border-slate-800">
-            <div className="mb-6 text-center">
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Reserve Your Slot</h2>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-                    Fill out the form below to book your appointment.
-                </p>
-            </div>
-            <div className="grid grid-cols-1 gap-5">
-                <div className="flex items-center justify-between text-sm">
-
-                    <p className="text-sm text-muted-foreground">Starting from</p>
-
-                    <h2 className="mt-1 text-3xl font-bold">
-
-                        hourlyrate
-
-                        <span className="ml-1 text-sm font-normal text-muted-foreground">
-
-                            / hour
-
-                        </span>
-
-                    </h2>
-
+        <Card className="mx-auto h-fit w-full max-w-md shadow-lg">
+            <CardHeader className="border-b bg-muted/30">
+                <div className="flex items-start justify-between gap-4">
+                    <div>
+                        <CardTitle className="text-2xl">Reserve this studio</CardTitle>
+                        <CardDescription className="mt-1.5">
+                            Choose a date and time to request your session.
+                        </CardDescription>
+                    </div>
+                    <CalendarDays className="mt-1 size-5 shrink-0 text-primary" />
                 </div>
-                <div className="space-y-4 rounded-xl bg-muted/50 p-4">
-
-                    <div className="flex items-center justify-between text-sm">
-
-                        <span className="text-muted-foreground">Category</span>
-
-                        <span className="font-medium">Category</span>
-
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-
-                        <span className="text-muted-foreground">Capacity</span>
-
-                        <span className="font-medium">Category People</span>
-
-                    </div>
-                    <div className="flex items-center justify-between text-sm">
-
-                        <span className="text-muted-foreground">Security Deposit</span>
-
-                        <span className="font-medium">securitydeposite</span>
-
-                    </div>
-                    <div className="flex items-center justify-between border-t pt-3 text-sm">
-
-                        <span className="text-muted-foreground">Booking Type</span>
-
-                        <span className="font-medium">Hourly</span>
-
-                    </div>
-
+                <div className="flex items-end justify-between gap-3 pt-3">
+                    <span className="text-sm text-muted-foreground">Starting from</span>
+                    <span className="text-right text-2xl font-bold tracking-tight">
+                        {formatPrice(studio.hourlyRate)}
+                        <span className="ml-1 text-sm font-normal text-muted-foreground">/ hour</span>
+                    </span>
                 </div>
-
-            </div>
-
-            <form onSubmit={handleSubmit} className="space-y-4">
-                {/* Full Name */}
-                <div className="space-y-1.5 mt-5">
-                    <label htmlFor="fullName" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                        Full Name
-                    </label>
-                    <div className="relative">
-                        <User className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                            readOnly
-                            disabled
-                            type="text"
-                            id="fullName"
-                            name="fullName"
-                            value={name}
-                            className="w-full pl-9 pr-3 py-2.5 text-gray-600 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
-                        />
+                <div className="grid gap-2 pt-2 text-sm sm:grid-cols-2">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Badge variant="secondary">{studio.category}</Badge>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground sm:justify-end">
+                        <MapPin className="size-4 shrink-0" />
+                        <span className="truncate">{studio.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                        <Users className="size-4 shrink-0" />
+                        <span>Up to {studio.maxCapacity} people</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground sm:justify-end">
+                        <ShieldCheck className="size-4 shrink-0" />
+                        <span>Deposit: {formatPrice(studio.securityDeposit)}</span>
                     </div>
                 </div>
+            </CardHeader>
 
-                {/* Email & Phone */}
-                <div className="grid grid-cols-1 gap-4">
-                    <div className="space-y-1.5">
-                        <label htmlFor="email" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            Email Address
-                        </label>
-                        <div className="relative">
-                            <Mail className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input
-                                readOnly
-                                type="email"
-                                disabled
-                                id="email"
-                                name="email"
-                                value={Email}
-                                className="w-full pl-9 pr-3 py-2.5 text-gray-500 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-gray-200"
-                            />
-                        </div>
+            <CardContent className="pt-6">
+                {error && (
+                    <Alert variant="destructive" className="mb-5">
+                        <AlertCircle />
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
+
+                {sessionPending ? (
+                    <div className="flex min-h-32 items-center justify-center gap-2 text-sm text-muted-foreground">
+                        <LoaderCircle className="size-4 animate-spin" />
+                        Checking your account…
                     </div>
-
-                </div>
-
-
-                {/* Date Selection */}
-                <div className="space-y-1.5">
-                    <label htmlFor="bookingDate" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                        Date
-                    </label>
-                    <div className="relative">
-                        <Calendar className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                        <input
-                            required
-                            type="date"
-                            id="bookingDate"
-                            name="bookingDate"
-                            min={today}
-                            defaultValue={today}
-                            className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
-                        />
+                ) : !signedIn ? (
+                    <div className="rounded-xl border border-dashed px-5 py-6 text-center">
+                        <p className="font-medium">Sign in to request this studio</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                            Your booking will be linked to your account.
+                        </p>
+                        <Button render={<Link href={loginHref} />} className="mt-4 gap-2">
+                            <LogIn className="size-4" />
+                            Sign in to continue
+                        </Button>
                     </div>
-                </div>
-
-                {/* Start Hour & End Hour */}
-                <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                        <label htmlFor="startTime" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            Start Time
-                        </label>
-                        <div className="relative">
-                            <Clock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input
+                ) : (
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                        <div className="space-y-2">
+                            <Label htmlFor="bookingDate">Booking date</Label>
+                            <Input
                                 required
-                                type="time"
-                                id="startTime"
-                                name="startTime"
-                                defaultValue="09:00"
-                                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
+                                type="date"
+                                id="bookingDate"
+                                name="bookingDate"
+                                min={today}
+                                defaultValue={today}
+                                className="h-11"
                             />
                         </div>
-                    </div>
 
-                    <div className="space-y-1.5">
-                        <label htmlFor="endTime" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                            End Time
-                        </label>
-                        <div className="relative">
-                            <Clock className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-                            <input
-                                required
-                                type="time"
-                                id="endTime"
-                                name="endTime"
-                                defaultValue="10:00"
-                                className="w-full pl-9 pr-3 py-2.5 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white"
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="space-y-2">
+                                <Label htmlFor="startTime">Start time</Label>
+                                <div className="relative">
+                                    <Clock3 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                    <Input
+                                        required
+                                        type="time"
+                                        id="startTime"
+                                        name="startTime"
+                                        defaultValue="09:00"
+                                        className="h-11 pl-9"
+                                    />
+                                </div>
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="endTime">End time</Label>
+                                <div className="relative">
+                                    <Clock3 className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                                    <Input
+                                        required
+                                        type="time"
+                                        id="endTime"
+                                        name="endTime"
+                                        defaultValue="10:00"
+                                        className="h-11 pl-9"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="notes">Special requests</Label>
+                            <Textarea
+                                id="notes"
+                                name="notes"
+                                rows={3}
+                                maxLength={1000}
+                                placeholder="Share any setup preferences or notes for the host."
+                                className="resize-y"
                             />
                         </div>
-                    </div>
-                </div>
 
-                {/* Notes/Comments */}
-                <div className="space-y-1.5">
-                    <label htmlFor="notes" className="text-xs font-semibold text-slate-700 dark:text-slate-300">
-                        Special Requests / Notes
-                    </label>
-                    <textarea
-                        id="notes"
-                        name="notes"
-                        rows={3}
-                        placeholder="Any specific setup or notes..."
-                        className="w-full p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:text-white resize-none"
-                    />
-                </div>
+                        <div className="rounded-xl bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
+                            Your request will be saved as <strong className="font-semibold text-foreground">Pending</strong> until the host responds.
+                        </div>
 
-                {/* Submit Button */}
-                <button
-                    type="submit"
-                    disabled={loading}
-                    className="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-indigo-200 dark:shadow-none"
-                >
-                    {loading ? (
-                        <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                            Processing...
-                        </>
-                    ) : (
-                        "Confirm Booking"
-                    )}
-                </button>
-            </form>
-        </div >
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            className="h-11 w-full gap-2 rounded-xl text-sm font-semibold"
+                        >
+                            {loading ? (
+                                <>
+                                    <LoaderCircle className="size-4 animate-spin" />
+                                    Sending request…
+                                </>
+                            ) : (
+                                "Request booking"
+                            )}
+                        </Button>
+                    </form>
+                )}
+            </CardContent>
+            <CardFooter className="justify-center border-t text-xs text-muted-foreground">
+                No payment information is collected with this request.
+            </CardFooter>
+        </Card>
     );
 }

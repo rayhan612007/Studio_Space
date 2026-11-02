@@ -13,6 +13,11 @@ const client = new MongoClient(mongoUrl);
 
 const db = client.db("studiodatabase");
 
+export async function getDatabase() {
+    await client.connect();
+    return db;
+}
+
 export const auth = betterAuth({
     baseURL: process.env.BETTER_AUTH_URL,
 
