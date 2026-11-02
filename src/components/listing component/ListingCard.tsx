@@ -73,9 +73,9 @@ export default function ListingCard({
             {/* --- Action Buttons --- */}
             <div className="px-5 pb-5 pt-2 flex items-center gap-3 bg-gray-50/50 border-t border-gray-100">
 
-                <UpdateList id={_id} />
+                <UpdateList id={_id} initialdata={item} />
 
-                <DeleteList id={_id}  />
+                <DeleteList id={_id} />
 
             </div>
         </div>

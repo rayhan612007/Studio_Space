@@ -1,3 +1,6 @@
+"use client"
+
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -9,37 +12,39 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Field, FieldGroup } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Idata } from "../type/Idata"
 import { toast } from "../ui/toast"
-import { success } from "better-auth"
 import { useRouter } from "next/navigation"
 
-
 export function DeleteList({ id }: { id: string }) {
-    const router = useRouter();
+    const [open, setOpen] = useState(false)
+    const router = useRouter()
+
     const handleDelete = async (e: React.FormEvent) => {
-        e.preventDefault();
+        e.preventDefault()
         try {
             const res = await fetch(`http://localhost:7000/my-listings/${id}`, {
                 method: 'DELETE',
-            });
+            })
             if (res.ok) {
-                router.refresh();
+
                 toast.add({ title: "Successfully deleted listing!", type: "success" })
+                setOpen(false)
             }
         } catch (error) {
             console.error("Error ", error)
-
+        }
+        finally {
+            router.refresh()
         }
     }
+
     return (
-        <Dialog>
-            <form>
-                <DialogTrigger render={<Button variant="outline">Open Dialog</Button>} />
-                <DialogContent className="sm:max-w-sm">
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger >
+                <Button variant="destructive">Delete Listing</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-sm">
+                <form onSubmit={handleDelete}>
                     <DialogHeader>
                         <DialogTitle>Delete</DialogTitle>
                         <DialogDescription>
@@ -47,12 +52,16 @@ export function DeleteList({ id }: { id: string }) {
                             and remove your data from our servers.
                         </DialogDescription>
                     </DialogHeader>
-                    <DialogFooter>
-                        <DialogClose render={<Button variant="outline">Cancel</Button>} />
-                        <Button onClick={handleDelete} className="bg-red-700 dark:text-black" type="submit">Delete</Button>
+                    <DialogFooter className="mt-4">
+                        <DialogClose >
+                            <Button type="button" variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button className="bg-red-700 hover:bg-red-800 text-white" type="submit">
+                            Delete
+                        </Button>
                     </DialogFooter>
-                </DialogContent>
-            </form>
-        </Dialog >
+                </form>
+            </DialogContent>
+        </Dialog>
     )
 }
