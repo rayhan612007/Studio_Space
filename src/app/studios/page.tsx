@@ -1,9 +1,13 @@
 
 
+import Link from "next/link";
+import { AlertTriangle, Compass, Plus } from "lucide-react";
+
 import Studiocard from "@/components/Explore hero/Studiocard";
 import StudiosHero from "@/components/Explore hero/Studiohero";
 import Studionav from "@/components/Explore hero/Studionav";
 import { Idata } from "@/components/type/Idata";
+import { Button } from "@/components/ui/button";
 
 interface StudiosProps {
     searchParams: Promise<{
@@ -12,8 +16,19 @@ interface StudiosProps {
     }>;
 }
 
+const categoryTerms: Record<string, string[]> = {
+    photo: ["photo"],
+    sound: ["sound", "film"],
+    film: ["sound", "film"],
+    podcast: ["podcast"],
+    music: ["music"],
+    art: ["art", "workshop"],
+    workshop: ["art", "workshop"],
+};
+
 const Studios = async ({ searchParams }: StudiosProps) => {
     let data: Idata[] = [];
+    let fetchError = false;
 
     const { category = "all", sort = "default" } = await searchParams;
 
@@ -29,15 +44,19 @@ const Studios = async ({ searchParams }: StudiosProps) => {
         data = await res.json();
     } catch (error) {
         console.error("Studio fetching error:", error);
+        fetchError = true;
     }
 
     // Filter data by category
     const filteredData = data.filter((studio) => {
         if (category === "all") return true;
 
-        return studio.category
-            ?.toLowerCase()
-            .includes(category.toLowerCase());
+        const studioCategory = studio.category?.toLowerCase() ?? "";
+        const matchingTerms = categoryTerms[category.toLowerCase()] ?? [
+            category.toLowerCase(),
+        ];
+
+        return matchingTerms.some((term) => studioCategory.includes(term));
     });
     const sortedData = [...filteredData];
 
@@ -75,9 +94,51 @@ const Studios = async ({ searchParams }: StudiosProps) => {
                         ))}
                     </div>
                 ) : (
-                    <p className="py-10 text-center text-muted-foreground">
-                        No studios available in this category.
-                    </p>
+                    <div className="flex min-h-72 flex-col items-center justify-center rounded-2xl border border-dashed bg-card px-6 py-12 text-center">
+                        <div className="mb-4 rounded-2xl bg-primary/10 p-4 text-primary">
+                            {fetchError ? (
+                                <AlertTriangle className="size-7" />
+                            ) : (
+                                <Compass className="size-7" />
+                            )}
+                        </div>
+                        <h2 className="text-xl font-semibold">
+                            {fetchError ? "Studios couldn’t be loaded" : "No studios found"}
+                        </h2>
+                        <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
+                            {fetchError
+                                ? "Please try again in a moment, or browse the full collection."
+                                : "There aren’t any spaces matching this category yet. Browse all studios or list your own space."}
+                        </p>
+                        <div className="mt-6 flex flex-wrap justify-center gap-3">
+                            {fetchError ? (
+                                <form action="/studios" method="get">
+                                    <Button type="submit" className="gap-2">
+                                        <Compass className="size-4" />
+                                        Try again
+                                    </Button>
+                                </form>
+                            ) : (
+                                <Button
+                                    render={<Link href="/studios" />}
+                                    nativeButton={false}
+                                    className="gap-2"
+                                >
+                                    <Compass className="size-4" />
+                                    Browse all studios
+                                </Button>
+                            )}
+                            <Button
+                                variant="outline"
+                                render={<Link href="/add-studio" />}
+                                nativeButton={false}
+                                className="gap-2"
+                            >
+                                <Plus className="size-4" />
+                                Host your space
+                            </Button>
+                        </div>
+                    </div>
                 )}
             </section>
         </div>

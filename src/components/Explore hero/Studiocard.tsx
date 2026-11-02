@@ -49,7 +49,7 @@ export default function Studiocard({ info }: { info: Idata }) {
         {/* Rating */}
         <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-background/90 px-3 py-1.5 text-sm font-semibold shadow-sm backdrop-blur">
           <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-          {info.rating ?? "New"}
+          {info.rating || "New"}
         </div>
 
         {/* Location on Image */}
@@ -103,9 +103,9 @@ export default function Studiocard({ info }: { info: Idata }) {
             </p>
 
             <p className="text-2xl font-bold tracking-tight">
-              ${info.hourlyRate}
+              {info.hourlyRate ? `$${info.hourlyRate}` : "Price unavailable"}
               <span className="ml-1 text-sm font-normal text-muted-foreground">
-                / hour
+                {info.hourlyRate ? "/ hr" : ""}
               </span>
             </p>
           </div>
@@ -115,7 +115,7 @@ export default function Studiocard({ info }: { info: Idata }) {
             nativeButton={false}
             className="h-10 rounded-xl px-4 shadow-sm"
           >
-            View details
+            View Details
             <ArrowUpRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
           </Button>
         </div>

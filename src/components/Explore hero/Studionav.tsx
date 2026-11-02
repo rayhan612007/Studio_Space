@@ -23,17 +23,23 @@ import {
 const categories = [
     { name: "All", value: "all", icon: LayoutGrid },
     { name: "Photo", value: "photo", icon: Camera },
-    { name: "Film stage", value: "film", icon: AudioLines },
-    { name: "Podcast", value: "podcast", icon: Mic },
-    { name: "Music", value: "music", icon: Music },
-    { name: "Workshop", value: "workshop", icon: Palette },
+    { name: "Sound Stages", value: "sound", icon: AudioLines },
+    { name: "Podcast Rooms", value: "podcast", icon: Mic },
+    { name: "Music Suites", value: "music", icon: Music },
+    { name: "Art Workshops", value: "art", icon: Palette },
 ];
+
+const categoryAliases: Record<string, string> = {
+    film: "sound",
+    workshop: "art",
+};
 
 export default function Studionav() {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();
-    const activeCategory = searchParams.get("category") || "all";
+    const requestedCategory = searchParams.get("category") || "all";
+    const activeCategory = categoryAliases[requestedCategory] ?? requestedCategory;
     const activeSort = searchParams.get("sort") || "default";
 
     const getCategoryHref = (category: string) => {

@@ -81,12 +81,25 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                 },
                 body: JSON.stringify(updatedata)
             })
-            if (res.ok) {
-                toast.add({ title: "Successfully deleted listing!", type: "success" })
+            if (!res.ok) {
+                const result: unknown = await res.json().catch(() => null)
+                const message =
+                    typeof result === "object" &&
+                    result !== null &&
+                    "error" in result &&
+                    typeof result.error === "string"
+                        ? result.error
+                        : "Unable to update this listing. Please try again."
+                throw new Error(message)
             }
+            toast.add({ title: "Listing updated", type: "success" })
             setOpen(false)
         } catch (error) {
-            console.error("Failed to update studio:", error)
+            toast.add({
+                title: "Could not update listing",
+                description: error instanceof Error ? error.message : "Please try again.",
+                type: "error",
+            })
         } finally {
             setLoading(false)
         }

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 
 import type { BookingRecord } from "@/components/bookingaside/Bookingcard";
+import { usePrivateSession } from "@/components/PrivateRoute";
 import { STUDIO_API_URL } from "@/lib/studio-api";
 import {
     DashboardHeader,
@@ -12,11 +13,8 @@ import {
 } from "./components";
 import { parseBookings } from "./dashboard-data";
 
-interface DashboardOverviewProps {
-    userName: string;
-}
-
-export default function DashboardOverview({ userName }: DashboardOverviewProps) {
+export default function DashboardOverview() {
+    const { user } = usePrivateSession();
     const [bookings, setBookings] = useState<BookingRecord[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -70,7 +68,7 @@ export default function DashboardOverview({ userName }: DashboardOverviewProps) 
     return (
         <main className="min-h-[65vh] flex-1 bg-muted/30">
             <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
-                <DashboardHeader userName={userName} />
+                <DashboardHeader userName={user.name} />
                 <DashboardStats
                     totalBookings={bookings.length}
                     pendingBookings={pendingCount}

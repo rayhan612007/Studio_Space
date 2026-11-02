@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import Signingoogle from "@/components/Signingoogle";
+import { toast } from "@/components/ui/toast";
 
 export default function Login() {
     const router = useRouter();
@@ -25,29 +26,28 @@ export default function Login() {
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
-        const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
-        const callbackURL =
-            requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
-                ? requestedCallback
-                : "/";
-
         try {
             const { error } = await authClient.signIn.email({
                 email,
                 password,
-                callbackURL,
+                callbackURL: "/",
             });
 
             if (error) {
-                setError(error.message || "Invalid email or password.");
+                const message = error.message || "Invalid email or password.";
+                setError(message);
+                toast.add({ title: "Login failed", description: message, type: "error" });
                 setLoading(false);
                 return;
             }
 
-            router.push(callbackURL);
+            toast.add({ title: "Welcome back", description: "You’re signed in.", type: "success" });
+            router.push("/");
             router.refresh();
         } catch {
-            setError("An unexpected error occurred.");
+            const message = "An unexpected error occurred.";
+            setError(message);
+            toast.add({ title: "Login failed", description: message, type: "error" });
             setLoading(false);
         }
     };
@@ -67,7 +67,7 @@ export default function Login() {
                         </span>
                     </Link>
                     <h2 className="page-heading text-2xl sm:text-3xl">
-                        Welcome Back
+                        Login to StudioSpace
                     </h2>
                     <p className="page-description mx-auto">
                         Please sign in to your account
@@ -83,7 +83,7 @@ export default function Login() {
                 )}
 
                 {/* Social Login Button (Continue with Google) */}
-                <Signingoogle />
+                <Signingoogle callbackURL="/" />
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">
@@ -124,12 +124,9 @@ export default function Login() {
                             <Label htmlFor="password" className="text-sm font-medium text-foreground">
                                 Password
                             </Label>
-                            <Link
-                                href="/forgot-password"
-                                className="text-xs font-semibold text-primary transition-colors hover:text-primary/80"
-                            >
+                            <span className="cursor-pointer text-xs font-semibold text-muted-foreground transition-colors hover:text-primary">
                                 Forgot password?
-                            </Link>
+                            </span>
                         </div>
                         <div className="relative">
                             <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">

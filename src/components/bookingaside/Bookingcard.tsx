@@ -26,6 +26,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { STUDIO_API_URL } from "@/lib/studio-api";
+import { toast } from "@/components/ui/toast";
 import {
     Card,
     CardContent,
@@ -202,12 +203,13 @@ function CancelBookingAction({
             }
 
             onBookingCancelled(bookingId);
+            toast.add({ title: "Booking cancelled", description: studioTitle, type: "success" });
         } catch (requestError) {
-            setError(
-                requestError instanceof Error
-                    ? requestError.message
-                    : "We couldn’t cancel this booking. Please try again.",
-            );
+            const message = requestError instanceof Error
+                ? requestError.message
+                : "We couldn’t cancel this booking. Please try again.";
+            setError(message);
+            toast.add({ title: "Cancellation failed", description: message, type: "error" });
         } finally {
             setCancelling(false);
         }

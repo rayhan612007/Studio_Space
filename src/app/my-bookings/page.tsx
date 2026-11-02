@@ -1,14 +1,10 @@
-import { redirect } from "next/navigation";
-
-import { getCurrentSession } from "@/app/lib/session";
+import PrivateRoute from "@/components/PrivateRoute";
 import MyBookingsDashboard from "./MyBookingsDashboard";
 
-export default async function MyBookingsPage() {
-    const session = await getCurrentSession();
-
-    if (!session) {
-        redirect("/login?callbackURL=%2Fmy-bookings");
-    }
-
-    return <MyBookingsDashboard />;
+export default function MyBookingsPage() {
+    return (
+        <PrivateRoute>
+            <MyBookingsDashboard />
+        </PrivateRoute>
+    );
 }

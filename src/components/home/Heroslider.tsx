@@ -23,30 +23,30 @@ import "swiper/css/effect-fade";
 const slides = [
     {
         id: 1,
-        title: "Find Your Perfect Creative Space",
+        title: "Find the Space Behind Your Next Great Shot",
         subtitle:
-            "Discover inspiring studios designed for photographers, creators, and professionals.",
+            "Book photo studios, film stages, and creative spaces built for the way you work.",
         image:
-            "https://images.unsplash.com/photo-1497366754035-f200968a6e72",
-        tag: "DISCOVER YOUR SPACE",
+            "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=2400&q=85",
+        tag: "MADE FOR CREATORS",
     },
     {
         id: 2,
-        title: "Create Something Extraordinary",
+        title: "Your Sound. Your Stage. Your Studio.",
         subtitle:
-            "From photography studios to modern workspaces, find the perfect place for your next big idea.",
+            "Find recording suites and podcast rooms with the setup your next production needs.",
         image:
-            "https://images.unsplash.com/photo-1497366811353-6870744d04b2",
-        tag: "UNLOCK YOUR CREATIVITY",
+            "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?auto=format&fit=crop&w=2400&q=85",
+        tag: "MAKE SOMETHING GREAT",
     },
     {
         id: 3,
-        title: "Your Space. Your Opportunity.",
+        title: "Turn Your Creative Space Into Someone’s Next Big Idea",
         subtitle:
-            "Turn your beautiful space into an opportunity. Host, connect, and grow with StudioSpace.",
+            "List your studio on StudioSpace and connect with creators looking for a place to make.",
         image:
-            "https://images.unsplash.com/photo-1497366216548-37526070297c",
-        tag: "HOST YOUR SPACE",
+            "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=2400&q=85",
+        tag: "HOST ON STUDIOSPACE",
     },
 ];
 

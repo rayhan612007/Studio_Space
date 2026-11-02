@@ -37,11 +37,17 @@ export default function FeaturedStudios({ data }: { data: Idata[] }) {
                 </div>
 
                 {/* Studios Grid */}
-                <div className="grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
-                    {data.map((studio) => (
-                        <Studiocard key={studio._id} info={studio} />
-                    ))}
-                </div>
+                {data.length > 0 ? (
+                    <div className="grid auto-rows-fr grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+                        {data.map((studio) => (
+                            <Studiocard key={studio._id} info={studio} />
+                        ))}
+                    </div>
+                ) : (
+                    <p className="rounded-2xl border border-dashed border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
+                        Featured studios are unavailable right now. Please check back soon.
+                    </p>
+                )}
 
             </div>
         </section>

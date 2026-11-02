@@ -3,8 +3,9 @@ import { authClient } from '@/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
+import { toast } from "@/components/ui/toast";
 
-const Signingoogle = () => {
+const Signingoogle = ({ callbackURL: callbackOverride }: { callbackURL?: string }) => {
     const [googleLoading, setGoogleLoading] = useState(false);
     const [error, setError] = useState("");
     const handleGoogleSignIn = async () => {
@@ -12,17 +13,26 @@ const Signingoogle = () => {
         setError("");
         const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
         const callbackURL =
-            requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+            callbackOverride ??
+            (requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
                 ? requestedCallback
-                : "/";
+                : "/");
 
         try {
-            await authClient.signIn.social({
+            const { error: signInError } = await authClient.signIn.social({
                 provider: "google",
                 callbackURL,
             });
+            if (signInError) {
+                const message = signInError.message || "Could not connect to Google sign-in.";
+                setError(message);
+                toast.add({ title: "Google sign-in failed", description: message, type: "error" });
+                setGoogleLoading(false);
+            }
         } catch {
-            setError("Could not connect to Google sign-in.");
+            const message = "Could not connect to Google sign-in.";
+            setError(message);
+            toast.add({ title: "Google sign-in failed", description: message, type: "error" });
             setGoogleLoading(false);
         }
     };

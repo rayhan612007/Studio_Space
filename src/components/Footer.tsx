@@ -2,8 +2,18 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function Footer() {
+    const [newsletterMessage, setNewsletterMessage] = useState("");
+
+    function handleNewsletterSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+        setNewsletterMessage("Newsletter signup isn’t connected yet.");
+    }
+
     return (
         <footer className="border-t border-border bg-card text-muted-foreground">
             <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-8">
@@ -41,6 +51,39 @@ export default function Footer() {
                             StudioSpace is your ultimate platform to discover, book, and manage professional creative spaces. Empowering creators, photographers, and artists worldwide.
                         </p>
 
+                        <div className="max-w-md space-y-3 pt-2">
+                            <div>
+                                <h3 className="text-sm font-semibold text-foreground">
+                                    Get studio updates
+                                </h3>
+                                <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                                    Sign up for creative space news and inspiration.
+                                </p>
+                            </div>
+                            <form
+                                onSubmit={handleNewsletterSubmit}
+                                className="flex flex-col gap-2 sm:flex-row"
+                            >
+                                <Input
+                                    type="email"
+                                    name="newsletterEmail"
+                                    autoComplete="email"
+                                    required
+                                    maxLength={254}
+                                    placeholder="Your email address"
+                                    aria-label="Email address for newsletter"
+                                    className="h-10 min-w-0 flex-1"
+                                />
+                                <Button type="submit" size="sm">
+                                    Subscribe
+                                </Button>
+                            </form>
+                            {newsletterMessage && (
+                                <p role="status" className="text-xs text-muted-foreground">
+                                    {newsletterMessage}
+                                </p>
+                            )}
+                        </div>
                     </div>
                     <div className="col-span-2 grid grid-cols-2 gap-x-5 gap-y-8 sm:gap-x-8 lg:col-span-2">
                         {/* Quick Navigation Links */}

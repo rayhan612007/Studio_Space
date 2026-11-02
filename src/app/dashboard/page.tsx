@@ -1,14 +1,10 @@
-import { redirect } from "next/navigation";
-
-import { getCurrentSession } from "@/app/lib/session";
+import PrivateRoute from "@/components/PrivateRoute";
 import DashboardOverview from "./DashboardOverview";
 
-export default async function DashboardPage() {
-    const session = await getCurrentSession();
-
-    if (!session) {
-        redirect("/login?callbackURL=%2Fdashboard");
-    }
-
-    return <DashboardOverview userName={session.user.name} />;
+export default function DashboardPage() {
+    return (
+        <PrivateRoute>
+            <DashboardOverview />
+        </PrivateRoute>
+    );
 }

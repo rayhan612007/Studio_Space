@@ -3,20 +3,21 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
-import { authClient } from "@/lib/auth-client";
+import PrivateRoute, { usePrivateSession } from "@/components/PrivateRoute";
 import { STUDIO_API_URL } from "@/lib/studio-api";
 import ListingCard from "@/components/listing component/ListingCard";
 import type { Idata } from "@/components/type/Idata";
+import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 
-const Listingpage = () => {
-    const { data: session, isPending: sessionLoading } = authClient.useSession();
-    const userEmail = session?.user?.email?.trim().toLowerCase();
+function ListingsContent() {
+    const { user } = usePrivateSession();
+    const userEmail = user.email.trim().toLowerCase();
     const [listings, setListings] = useState<Idata[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        if (sessionLoading) return;
         if (!userEmail) return;
         const email = userEmail;
 
@@ -44,6 +45,13 @@ const Listingpage = () => {
             } catch (requestError) {
                 if (controller.signal.aborted) return;
                 console.error("Error fetching listings:", requestError);
+                toast.add({
+                    title: "Listings couldn’t be loaded",
+                    description: requestError instanceof Error
+                        ? requestError.message
+                        : "Please try again.",
+                    type: "error",
+                });
                 setError(
                     requestError instanceof Error
                         ? requestError.message
@@ -56,7 +64,7 @@ const Listingpage = () => {
 
         void fetchListings();
         return () => controller.abort();
-    }, [sessionLoading, userEmail]);
+    }, [userEmail]);
 
     return (
         <main className="min-h-[65vh] flex-1 bg-muted/30">
@@ -79,26 +87,35 @@ const Listingpage = () => {
                     </Link>
                 </div>
 
-                {sessionLoading || (Boolean(userEmail) && loading) ? (
-                    <p className="rounded-2xl border border-dashed border-border bg-card py-20 text-center text-muted-foreground">
-                        Loading your listings...
-                    </p>
+                {loading ? (
+                    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3" role="status" aria-label="Loading your listings">
+                        {[0, 1, 2].map((item) => (
+                            <div key={item} className="overflow-hidden rounded-2xl border bg-card">
+                                <div className="aspect-[4/3] animate-pulse bg-muted" />
+                                <div className="space-y-3 p-5">
+                                    <div className="h-5 w-2/3 animate-pulse rounded bg-muted" />
+                                    <div className="h-4 w-full animate-pulse rounded bg-muted" />
+                                    <div className="h-4 w-1/2 animate-pulse rounded bg-muted" />
+                                </div>
+                            </div>
+                        ))}
+                        <span className="sr-only">Loading your listings</span>
+                    </div>
                 ) : error ? (
                     <p role="alert" className="rounded-2xl border border-destructive/30 bg-card py-20 text-center text-destructive">
                         {error}
                     </p>
-                ) : !userEmail ? (
-                    <p className="rounded-2xl border border-dashed border-border bg-card py-20 text-center text-muted-foreground">
-                        Sign in to view your listings.
-                    </p>
                 ) : listings.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-border bg-card py-20 text-center">
+                    <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-card px-6 py-20 text-center">
                         <p className="text-lg font-medium text-muted-foreground">
                             No listings found.
                         </p>
                         <p className="mt-1 text-sm text-muted-foreground">
                             You haven&apos;t added any spaces yet.
                         </p>
+                        <Button render={<Link href="/add-studio" />} nativeButton={false} className="mt-5">
+                            Add your first studio
+                        </Button>
                     </div>
                 ) : (
                     <div className="studio-grid">
@@ -112,4 +129,10 @@ const Listingpage = () => {
     );
 };
 
-export default Listingpage;
+export default function Listingpage() {
+    return (
+        <PrivateRoute>
+            <ListingsContent />
+        </PrivateRoute>
+    );
+}

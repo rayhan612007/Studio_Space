@@ -17,6 +17,7 @@ import {
 
 import { authClient } from "@/lib/auth-client";
 import { STUDIO_API_URL } from "@/lib/studio-api";
+import { toast } from "@/components/ui/toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -65,7 +66,9 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
         const endTime = String(formData.get("endTime") ?? "");
 
         if (startTime >= endTime) {
-            setError("Choose an end time that is later than the start time.");
+            const message = "Choose an end time that is later than the start time.";
+            setError(message);
+            toast.add({ title: "Check your booking time", description: message, type: "error" });
             return;
         }
 
@@ -99,12 +102,17 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
             }
 
             setSubmitted(true);
+            toast.add({
+                title: "Booking request sent",
+                description: "You can track its status in My Bookings.",
+                type: "success",
+            });
         } catch (requestError) {
-            setError(
-                requestError instanceof Error
-                    ? requestError.message
-                    : "We couldn’t create your booking. Please try again.",
-            );
+            const message = requestError instanceof Error
+                ? requestError.message
+                : "We couldn’t create your booking. Please try again.";
+            setError(message);
+            toast.add({ title: "Booking failed", description: message, type: "error" });
         } finally {
             setLoading(false);
         }

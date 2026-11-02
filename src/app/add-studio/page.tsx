@@ -19,8 +19,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { authClient } from "@/lib/auth-client";
+import PrivateRoute, { usePrivateSession } from "@/components/PrivateRoute";
 import { STUDIO_API_URL } from "@/lib/studio-api";
+import { toast } from "@/components/ui/toast";
 
 const categories = [
     "Photo Studio",
@@ -42,8 +43,16 @@ const availableAmenities = [
 ];
 
 export default function AddStudioPage() {
+    return (
+        <PrivateRoute>
+            <AddStudioForm />
+        </PrivateRoute>
+    );
+}
+
+function AddStudioForm() {
     const router = useRouter();
-    const { data: session, isPending: sessionLoading } = authClient.useSession();
+    const session = usePrivateSession();
 
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState("");
@@ -66,7 +75,9 @@ export default function AddStudioPage() {
 
         const userEmail = session?.user?.email?.trim().toLowerCase();
         if (!userEmail) {
-            setErrorMessage("Sign in before creating a studio listing.");
+            const message = "Sign in before creating a studio listing.";
+            setErrorMessage(message);
+            toast.add({ title: "Sign in required", description: message, type: "error" });
             setLoading(false);
             return;
         }
@@ -92,25 +103,22 @@ export default function AddStudioPage() {
             }
 
             setSuccessMessage("Studio created successfully! Redirecting...");
+            toast.add({
+                title: "Studio created",
+                description: "Your listing is ready to manage.",
+                type: "success",
+            });
             setTimeout(() => {
                 router.push("/my-listings");
                 router.refresh();
             }, 1200);
         } catch (err) {
-            setErrorMessage(
-                err instanceof Error ? err.message : "Something went wrong.",
-            );
+            const message = err instanceof Error ? err.message : "Something went wrong.";
+            setErrorMessage(message);
+            toast.add({ title: "Could not create listing", description: message, type: "error" });
             setLoading(false);
         }
     };
-
-    if (sessionLoading) {
-        return (
-            <div className="min-h-[70vh] flex items-center justify-center">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-        );
-    }
 
     return (
         <div className="min-h-screen bg-muted/40 px-4 py-10 sm:px-6 sm:py-14 lg:px-8">

@@ -7,6 +7,7 @@ import BookingCard, {
     type BookingStatus,
 } from "@/components/bookingaside/Bookingcard";
 import { STUDIO_API_URL } from "@/lib/studio-api";
+import { toast } from "@/components/ui/toast";
 import {
     BookingEmptyState,
     BookingErrorState,
@@ -149,6 +150,13 @@ export default function MyBookingsDashboard() {
                         ? requestError.message
                         : "We couldn’t load your bookings. Please try again.",
                 );
+                toast.add({
+                    title: "Bookings couldn’t be loaded",
+                    description: requestError instanceof Error
+                        ? requestError.message
+                        : "Please try again.",
+                    type: "error",
+                });
             } finally {
                 if (!controller.signal.aborted) setLoading(false);
             }
@@ -202,9 +210,19 @@ export default function MyBookingsDashboard() {
                         />
 
                         {visibleBookings.length === 0 ? (
-                            <p className="rounded-2xl border border-dashed bg-card px-6 py-14 text-center text-sm text-muted-foreground">
-                                No {filter.toLowerCase()} bookings found.
-                            </p>
+                            <div className="rounded-2xl border border-dashed bg-card px-6 py-14 text-center">
+                                <p className="font-medium">No {filter.toLowerCase()} bookings found.</p>
+                                <p className="mt-1 text-sm text-muted-foreground">
+                                    Try another status to see your other reservations.
+                                </p>
+                                <button
+                                    type="button"
+                                    onClick={() => setFilter("All")}
+                                    className="mt-3 text-sm font-semibold text-primary underline-offset-4 hover:underline"
+                                >
+                                    Show all bookings
+                                </button>
+                            </div>
                         ) : (
                             <div className="grid auto-rows-fr gap-5 md:grid-cols-2 lg:grid-cols-3">
                                 {visibleBookings.map((booking, index) => (

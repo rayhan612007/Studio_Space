@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
     Dialog,
@@ -14,19 +15,37 @@ import {
 import { toast } from "../ui/toast"
 
 export function DeleteList({ id }: { id: string }) {
+    const [loading, setLoading] = useState(false)
+
     const handleDelete = async (e: React.FormEvent) => {
         e.preventDefault()
+        setLoading(true)
         try {
             const res = await fetch(`http://localhost:7000/my-listings/${id}`, {
                 method: 'DELETE',
             })
-            if (res.ok) {
-                toast.add({ title: "Successfully deleted listing!", type: "success" })
-                // Page complete reload korar jonno
-                window.location.reload()
+            if (!res.ok) {
+                const result: unknown = await res.json().catch(() => null)
+                const message =
+                    typeof result === "object" &&
+                    result !== null &&
+                    "error" in result &&
+                    typeof result.error === "string"
+                        ? result.error
+                        : "Unable to delete this listing. Please try again."
+                throw new Error(message)
             }
+
+            toast.add({ title: "Listing deleted", type: "success" })
+            window.location.reload()
         } catch (error) {
-            console.error("Error ", error)
+            toast.add({
+                title: "Could not delete listing",
+                description: error instanceof Error ? error.message : "Please try again.",
+                type: "error",
+            })
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -48,8 +67,8 @@ export function DeleteList({ id }: { id: string }) {
                         <DialogClose >
                             <Button type="button" variant="outline">Cancel</Button>
                         </DialogClose>
-                        <Button variant="destructive" type="submit">
-                            Delete
+                        <Button variant="destructive" type="submit" disabled={loading}>
+                            {loading ? "Deleting…" : "Delete"}
                         </Button>
                     </DialogFooter>
                 </form>

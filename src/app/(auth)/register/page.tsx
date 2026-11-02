@@ -3,32 +3,29 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Loader2, Lock, Mail, User, Image as ImageIcon, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authClient } from "@/lib/auth-client";
 import Signingoogle from "@/components/Signingoogle";
+import { toast } from "@/components/ui/toast";
 
 export default function Register() {
     const router = useRouter();
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    // Password strength check criteria: min 8 chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
     const validatePassword = (password: string) => {
-        if (password.length < 8) {
-            return "Password must be at least 8 characters long.";
+        if (password.length < 6) {
+            return "Password must be at least 6 characters long.";
         }
         if (!/[A-Z]/.test(password)) {
             return "Password must contain at least one uppercase letter.";
         }
         if (!/[a-z]/.test(password)) {
             return "Password must contain at least one lowercase letter.";
-        }
-        if (!/[0-9]/.test(password)) {
-            return "Password must contain at least one number.";
         }
         return null;
     };
@@ -37,40 +34,49 @@ export default function Register() {
         e.preventDefault();
         setError("");
 
-        // Collecting form data using FormData and Object.fromEntries
         const formData = new FormData(e.currentTarget);
-        const user = Object.fromEntries(formData.entries()) as { name: string, password: string, email: string, image: string, confirmpassword: string };
-        const { data, error } = await authClient.signUp.email({
-            ...user
-        });
-        if (data) {
-            console.log(data);
-            redirect('/')
-        }
-        if (error) {
-            console.log(error);
-        }
-
-        // 1. Password & Confirm Password Match Check
-        if (user.password !== user.confirmpassword) {
-            setError("Passwords do not match.");
-            return;
-        }
-
-        // 2. Password Strength Validation
+        const user = Object.fromEntries(formData.entries()) as {
+            name: string;
+            email: string;
+            image: string;
+            password: string;
+        };
         const passwordError = validatePassword(user.password);
         if (passwordError) {
             setError(passwordError);
+            toast.add({ title: "Registration failed", description: passwordError, type: "error" });
             return;
         }
 
         setLoading(true);
+        try {
+            const { error: registrationError } = await authClient.signUp.email({
+                name: user.name.trim(),
+                email: user.email.trim(),
+                password: user.password,
+                image: user.image.trim() || undefined,
+            });
 
-        // Simulated registration delay
-        setTimeout(() => {
-            setLoading(false);
+            if (registrationError) {
+                const message = registrationError.message || "Unable to create your account.";
+                setError(message);
+                toast.add({ title: "Registration failed", description: message, type: "error" });
+                return;
+            }
+
+            toast.add({
+                title: "Account created",
+                description: "Welcome to StudioSpace.",
+                type: "success",
+            });
             router.push("/");
-        }, 1500);
+        } catch {
+            const message = "An unexpected error occurred. Please try again.";
+            setError(message);
+            toast.add({ title: "Registration failed", description: message, type: "error" });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -102,7 +108,7 @@ export default function Register() {
                 )}
 
                 {/* Social Register Button (Continue with Google) */}
-                <Signingoogle />
+                <Signingoogle callbackURL="/" />
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">
@@ -196,29 +202,8 @@ export default function Register() {
                             />
                         </div>
                         <p className="mt-1 text-[11px] text-muted-foreground">
-                            Must be 8+ characters with uppercase, lowercase, number, and special character.
+                            Must be at least 6 characters and include an uppercase and a lowercase letter.
                         </p>
-                    </div>
-
-                    {/* Confirm Password Field */}
-                    <div className="space-y-1.5">
-                        <Label htmlFor="confirmPassword" className="text-sm font-medium text-foreground">
-                            Confirm Password
-                        </Label>
-                        <div className="relative">
-                            <span className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-muted-foreground">
-                                <Lock className="w-4 h-4" />
-                            </span>
-                            <Input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                placeholder="••••••••"
-                                className="h-11 rounded-xl border-input bg-background pl-10 text-foreground placeholder:text-muted-foreground focus-visible:ring-primary"
-                            />
-                        </div>
                     </div>
 
                     {/* Submit Button */}
