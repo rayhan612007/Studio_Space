@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { STUDIO_API_URL } from "@/lib/studio-api"
 import {
     Dialog,
     DialogClose,
@@ -74,8 +75,9 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
 
 
         try {
-            const res = await fetch(`http://localhost:7000/my-listings/${id}`, {
+            const res = await fetch(`${STUDIO_API_URL}/my-listings/${id}`, {
                 method: "PATCH",
+                credentials: "include",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -295,7 +297,7 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
                                     type="number"
                                     min="0"
                                     max="10"
-                                    step="0.01"
+                                    step="0.1"
                                     required
                                     defaultValue={initialdata?.rating || ""}
                                     placeholder="e.g. 10"

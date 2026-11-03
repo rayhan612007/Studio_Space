@@ -1,5 +1,5 @@
-import Image from "next/image";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
     ArrowLeft,
     MapPin,
@@ -7,38 +7,49 @@ import {
     Star,
     ShieldCheck,
     Clock,
+    UserRound,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Bookingaside from "@/components/bookingaside/Bookingaside";
+import { STUDIO_API_URL } from "@/lib/studio-api";
+import StudioGallery from "@/components/studios/StudioGallery";
+import type { Idata } from "@/components/type/Idata";
 
 
 const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) => {
     const { id } = await params;
 
-    let studio = null;
+    let studio: Idata | null = null;
+    let studioNotFound = false;
 
     try {
-        const res = await fetch(`http://localhost:7000/studios/${id}`, {
+        const res = await fetch(`${STUDIO_API_URL}/studios/${id}`, {
             cache: "no-store",
         });
 
-        if (!res.ok) {
+        if (res.status === 404) {
+            studioNotFound = true;
+        } else if (!res.ok) {
             throw new Error("Failed to fetch studio details");
+        } else {
+            studio = await res.json() as Idata;
         }
-
-        studio = await res.json();
     } catch (error) {
         console.error("Studio fetching error:", error);
+    }
+
+    if (studioNotFound) {
+        notFound();
     }
 
     if (!studio) {
         return (
             <div className="container mx-auto flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-                <h2 className="text-2xl font-bold">Workspace not found</h2>
+                <h2 className="text-2xl font-bold">Workspace details unavailable</h2>
                 <p className="mt-2 text-muted-foreground">
-                    This workspace may have been removed or is unavailable.
+                    We couldn’t load this workspace right now. Please try again later.
                 </p>
                 <Button className="mt-5 rounded-xl" >
                     <Link href="/studios">
@@ -81,14 +92,12 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
                                     {studio.location}
                                 </span>
 
-                                {studio.rating && (
-                                    <span className="flex items-center gap-1.5">
-                                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                                        <span className="font-semibold text-foreground">
-                                            {studio.rating}
-                                        </span>
+                                <span className="flex items-center gap-1.5">
+                                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                                    <span className="font-semibold text-foreground">
+                                        {studio.rating || "0"}/10
                                     </span>
-                                )}
+                                </span>
                             </div>
                         </div>
 
@@ -105,23 +114,11 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
                     {/* Left Section */}
                     <div className="space-y-8 lg:col-span-2">
 
-                        {/* Workspace Image */}
-                        <div className="relative aspect-[16/9] overflow-hidden rounded-2xl border bg-muted">
-                            {studio.imageUrl ? (
-                                <Image
-                                    src={studio.imageUrl}
-                                    alt={studio.title}
-                                    fill
-                                    priority
-                                    sizes="(max-width: 1024px) 100vw, 66vw"
-                                    className="object-cover"
-                                />
-                            ) : (
-                                <div className="flex h-full items-center justify-center text-muted-foreground">
-                                    No image available
-                                </div>
-                            )}
-                        </div>
+                        <StudioGallery
+                            title={studio.title}
+                            imageUrl={studio.imageUrl}
+                            gallery={studio.gallery}
+                        />
 
                         {/* Overview */}
                         <section className="space-y-3">
@@ -206,8 +203,8 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
                             </h2>
                             <div className="rounded-xl border border-border bg-muted/50 px-4 py-3 text-left text-xs font-medium text-foreground transition-all">
                                 <div className="flex flex-wrap gap-2">
-                                    {
-                                        studio?.amenities?.map((item: string, ind: number) => (
+                                    {studio.amenities?.length ? (
+                                        studio.amenities.map((item, ind) => (
                                             <span
                                                 key={ind}
                                                 className="w-fit rounded-full bg-primary/10 px-3 py-1.5 text-xs font-medium text-primary"
@@ -215,9 +212,48 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
                                                 {item}
                                             </span>
                                         ))
-                                    }
+                                    ) : (
+                                        <p className="text-sm text-muted-foreground">No amenities listed yet.</p>
+                                    )}
                                 </div>
                             </div>
+                        </section>
+
+                        <section className="space-y-4">
+                            <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                                About the host
+                            </h2>
+                            <div className="flex items-center gap-4 rounded-xl border p-4">
+                                <div className="rounded-full bg-primary/10 p-3 text-primary">
+                                    <UserRound className="size-5" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold">{studio.hostName || "Studio host"}</p>
+                                    <p className="text-sm text-muted-foreground">Workspace host</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="space-y-4">
+                            <div className="flex items-center gap-2">
+                                <h2 className="text-2xl font-bold tracking-tight text-foreground">
+                                    Reviews
+                                </h2>
+                                <Badge variant="secondary">{studio.rating || "0"}/10</Badge>
+                            </div>
+                            {studio.review?.trim() ? (
+                                <div className="rounded-xl border p-4">
+                                    <div className="mb-2 flex items-center gap-1 text-sm font-semibold">
+                                        <Star className="size-4 fill-yellow-400 text-yellow-400" />
+                                        {studio.rating || "0"}/10
+                                    </div>
+                                    <p className="text-sm leading-6 text-muted-foreground">{studio.review}</p>
+                                </div>
+                            ) : (
+                                <p className="rounded-xl border border-dashed p-4 text-sm text-muted-foreground">
+                                    No reviews yet.
+                                </p>
+                            )}
                         </section>
                     </div>
 

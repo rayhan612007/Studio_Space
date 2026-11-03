@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination, Navigation, EffectFade } from "swiper/modules";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
 import { Button } from "@/components/ui/button";
 
@@ -18,7 +18,6 @@ import {
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import "swiper/css/effect-fade";
 
 const slides = [
     {
@@ -54,14 +53,13 @@ export default function HeroSlider() {
     return (
         <section className="relative w-full overflow-hidden">
             <Swiper
-                modules={[Autoplay, Pagination, Navigation, EffectFade]}
-                effect="fade"
-                fadeEffect={{ crossFade: true }}
+                modules={[Autoplay, Pagination, Navigation]}
                 loop={true}
-                speed={1000}
+                speed={700}
                 autoplay={{
                     delay: 5000,
                     disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
                 }}
                 pagination={{
                     clickable: true,
@@ -74,7 +72,7 @@ export default function HeroSlider() {
             >
                 {slides.map((slide) => (
                     <SwiperSlide key={slide.id}>
-                        <div className="relative flex min-h-[520px] items-center sm:min-h-[600px] lg:min-h-[660px]">
+                        <div className="relative flex min-h-[560px] items-center sm:min-h-[610px] lg:min-h-[660px]">
 
                             {/* Background Image */}
                             <Image
@@ -87,30 +85,32 @@ export default function HeroSlider() {
                             />
 
                             {/* Dark Overlay */}
-                            <div className="absolute inset-0 bg-black/55" />
+                            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/20" />
+                            <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/35 to-transparent" />
 
                             {/* Content */}
-                            <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-20 text-white sm:px-8 md:px-12">
+                            <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-20 text-white sm:px-8 md:px-12 lg:px-16">
 
-                                <span className="mb-6 inline-block rounded-full border border-white/30 bg-white/10 px-4 py-2 text-xs font-semibold tracking-[3px] backdrop-blur-md">
+                                <span className="mb-6 inline-flex items-center rounded-full border border-white/25 bg-white/10 px-4 py-2 text-[11px] font-semibold tracking-[0.18em] backdrop-blur-md sm:text-xs">
                                     {slide.tag}
                                 </span>
 
-                                <h1 className="max-w-3xl text-4xl font-bold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+                                <h1 className="hero-heading text-white">
                                     {slide.title}
                                 </h1>
 
-                                <p className="mt-6 max-w-xl text-base leading-8 text-white/80 md:text-lg">
+                                <p className="mt-5 max-w-xl text-base leading-7 text-white/85 sm:mt-6 sm:text-lg sm:leading-8">
                                     {slide.subtitle}
                                 </p>
 
                                 {/* CTA Buttons */}
-                                <div className="mt-9 flex flex-wrap gap-4">
+                                <div className="mt-8 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:gap-4">
 
                                     <Button
                                         render={<Link href="/studios" />}
                                         nativeButton={false}
                                         size="lg"
+                                        className="w-full sm:w-auto"
                                     >
                                         Explore Studios
                                         <ArrowUpRight className="ml-2 h-5 w-5" />
@@ -121,7 +121,7 @@ export default function HeroSlider() {
                                         nativeButton={false}
                                         size="lg"
                                         variant="outline"
-                                        className="h-11 rounded-xl border-white/50 bg-white/10 px-6 text-white backdrop-blur-sm hover:bg-white hover:text-gray-950"
+                                        className="w-full border-white/50 bg-white/10 px-6 text-white backdrop-blur-sm hover:bg-white hover:text-gray-950 sm:w-auto"
                                     >
                                         Host Your Space
                                     </Button>
@@ -134,18 +134,18 @@ export default function HeroSlider() {
             </Swiper>
 
             {/* Custom Navigation */}
-            <div className="absolute bottom-8 right-6 z-20 flex items-center gap-3 md:right-12">
+            <div className="absolute bottom-5 right-5 z-20 flex items-center gap-2 sm:bottom-6 sm:right-8 sm:gap-3 lg:right-12">
 
                 <button
                     aria-label="Previous slide"
-                    className="hero-prev flex h-12 w-12 items-center justify-center rounded-full border border-white/40 text-white transition hover:bg-white hover:text-black"
+                    className="hero-prev flex size-10 items-center justify-center rounded-full border border-white/50 bg-black/15 text-white backdrop-blur-sm transition hover:bg-white hover:text-black sm:size-12"
                 >
                     <ArrowLeft size={20} />
                 </button>
 
                 <button
                     aria-label="Next slide"
-                    className="hero-next flex h-12 w-12 items-center justify-center rounded-full border border-white/40 text-white transition hover:bg-white hover:text-black"
+                    className="hero-next flex size-10 items-center justify-center rounded-full border border-white/50 bg-black/15 text-white backdrop-blur-sm transition hover:bg-white hover:text-black sm:size-12"
                 >
                     <ArrowRight size={20} />
                 </button>

@@ -128,19 +128,22 @@ export default function Navbar() {
             />
           ) : (
             <>
-              <Link
-                href="/login"
-                className="inline-flex h-10 items-center justify-center rounded-xl border border-border px-5 text-sm font-medium text-foreground transition hover:bg-muted"
+              <Button
+                render={<Link href="/login" />}
+                nativeButton={false}
+                variant="outline"
+                className="px-5"
               >
                 Login
-              </Link>
+              </Button>
 
-              <Link
-                href="/register"
-                className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-5 text-sm font-semibold text-primary-foreground shadow-sm transition hover:bg-primary/90"
+              <Button
+                render={<Link href="/register" />}
+                nativeButton={false}
+                className="px-5"
               >
                 Register
-              </Link>
+              </Button>
             </>
           )}
         </div>
@@ -180,7 +183,7 @@ export default function Navbar() {
                     height={40}
                     className="h-10 w-10 object-contain"
                   />
-                  <span className="text-lg font-bold tracking-tight">
+                  <span className="text-xl font-bold tracking-tight">
                     Studio<span className="text-primary">Space</span>
                   </span>
                 </Link>
@@ -239,21 +242,25 @@ export default function Navbar() {
 
                 {user ? (
                   <>
-                    <Link
-                      href="/dashboard"
+                    <Button
+                      render={<Link href="/dashboard" />}
+                      nativeButton={false}
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground transition hover:bg-muted"
+                      variant="outline"
+                      className="w-full justify-start"
                     >
                       Dashboard
-                    </Link>
+                    </Button>
 
-                    <Link
-                      href="/add-studio"
+                    <Button
+                      render={<Link href="/add-studio" />}
+                      nativeButton={false}
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center rounded-xl border border-border px-4 text-sm font-medium text-foreground transition hover:bg-muted"
+                      variant="outline"
+                      className="w-full justify-start"
                     >
                       Add New Studio
-                    </Link>
+                    </Button>
 
                     <Button
                       variant="destructive"
@@ -266,21 +273,24 @@ export default function Navbar() {
                   </>
                 ) : (
                   <>
-                    <Link
-                      href="/login"
+                    <Button
+                      render={<Link href="/login" />}
+                      nativeButton={false}
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center justify-center rounded-xl border border-border text-sm font-medium text-foreground transition hover:bg-muted"
+                      variant="outline"
+                      className="w-full"
                     >
                       Login
-                    </Link>
+                    </Button>
 
-                    <Link
-                      href="/register"
+                    <Button
+                      render={<Link href="/register" />}
+                      nativeButton={false}
                       onClick={() => setIsOpen(false)}
-                      className="inline-flex h-11 items-center justify-center rounded-xl bg-primary text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+                      className="w-full"
                     >
                       Register
-                    </Link>
+                    </Button>
                   </>
                 )}
               </div>

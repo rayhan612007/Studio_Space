@@ -7,6 +7,7 @@ export interface Idata {
     "securityDeposit": string,
     "location": string,
     "imageUrl": string,
+    "gallery"?: string[],
     "overview": string,
     "rating": string,
     "review": string,

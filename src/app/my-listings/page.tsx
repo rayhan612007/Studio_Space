@@ -19,18 +19,19 @@ function ListingsContent() {
 
     useEffect(() => {
         if (!userEmail) return;
-        const email = userEmail;
-
         const controller = new AbortController();
 
         async function fetchListings() {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`${STUDIO_API_URL}/my-listings`, {
-                    headers: { email },
-                    signal: controller.signal,
-                });
+                const response = await fetch(
+                    `${STUDIO_API_URL}/my-listings/${encodeURIComponent(userEmail)}`,
+                    {
+                        credentials: "include",
+                        signal: controller.signal,
+                    },
+                );
                 if (!response.ok) {
                     throw new Error("Unable to load your listings. Please try again.");
                 }

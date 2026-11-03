@@ -26,11 +26,16 @@ export default function Login() {
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
+        const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
+        const callbackURL =
+            requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+                ? requestedCallback
+                : "/";
         try {
             const { error } = await authClient.signIn.email({
                 email,
                 password,
-                callbackURL: "/",
+                callbackURL,
             });
 
             if (error) {
@@ -42,7 +47,7 @@ export default function Login() {
             }
 
             toast.add({ title: "Welcome back", description: "You’re signed in.", type: "success" });
-            router.push("/");
+            router.push(callbackURL);
             router.refresh();
         } catch {
             const message = "An unexpected error occurred.";

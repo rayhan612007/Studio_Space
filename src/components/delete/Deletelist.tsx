@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { STUDIO_API_URL } from "@/lib/studio-api"
 import {
     Dialog,
     DialogClose,
@@ -21,8 +22,9 @@ export function DeleteList({ id }: { id: string }) {
         e.preventDefault()
         setLoading(true)
         try {
-            const res = await fetch(`http://localhost:7000/my-listings/${id}`, {
+            const res = await fetch(`${STUDIO_API_URL}/my-listings/${id}`, {
                 method: 'DELETE',
+                credentials: "include",
             })
             if (!res.ok) {
                 const result: unknown = await res.json().catch(() => null)

@@ -25,13 +25,20 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import type { Idata } from "../type/Idata";
 
 function formatPrice(value: string) {
@@ -51,6 +58,7 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [open, setOpen] = useState(false);
     const today = new Date().toISOString().slice(0, 10);
     const signedIn = Boolean(session?.user);
     const loginHref = `/login?callbackURL=${encodeURIComponent(pathname || "/studios")}`;
@@ -118,89 +126,96 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
         }
     }
 
-    if (submitted) {
-        return (
-            <Card className="mx-auto h-fit w-full max-w-md text-center shadow-lg">
-                <CardContent className="flex flex-col items-center px-6 py-10">
-                    <span className="mb-5 rounded-full bg-emerald-500/10 p-4 text-emerald-600 dark:text-emerald-400">
-                        <CheckCircle2 className="size-9" />
-                    </span>
-                    <Badge variant="outline" className="mb-3 border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                        Pending confirmation
-                    </Badge>
-                    <CardTitle className="text-2xl">Booking request sent</CardTitle>
-                    <CardDescription className="mt-2 max-w-sm leading-6">
-                        Your request for {studio.title} is saved. You can follow its status from your bookings.
-                    </CardDescription>
-                    <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row">
-                        <Button
-                            render={<Link href="/my-bookings" />}
-                            nativeButton={false}
-                            className="flex-1"
-                        >
-                            View my bookings
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            onClick={() => setSubmitted(false)}
-                            className="flex-1"
-                        >
-                            Book another slot
-                        </Button>
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <Card className="h-fit w-full shadow-lg">
+                <CardHeader className="border-b bg-muted/30">
+                    <div className="flex items-start justify-between gap-4">
+                        <div>
+                            <CardTitle className="text-2xl">Workspace details</CardTitle>
+                            <CardDescription className="mt-1.5">
+                                Booking information for {studio.title}.
+                            </CardDescription>
+                        </div>
+                        <CalendarDays className="mt-1 size-5 shrink-0 text-primary" />
                     </div>
+                    <div className="flex items-end justify-between gap-3 pt-3">
+                        <span className="text-sm text-muted-foreground">Hourly rate</span>
+                        <span className="text-right text-2xl font-bold tracking-tight">
+                            {formatPrice(studio.hourlyRate)}
+                            <span className="ml-1 text-sm font-normal text-muted-foreground">/ hour</span>
+                        </span>
+                    </div>
+                    <div className="grid gap-3 pt-2 text-sm sm:grid-cols-2">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <Badge variant="secondary">{studio.category}</Badge>
+                        </div>
+                        <div className="flex min-w-0 items-center gap-2 text-muted-foreground sm:justify-end">
+                            <MapPin className="size-4 shrink-0" />
+                            <span className="truncate">{studio.location}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                            <Users className="size-4 shrink-0" />
+                            <span>Up to {studio.maxCapacity} people</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground sm:justify-end">
+                            <ShieldCheck className="size-4 shrink-0" />
+                            <span>Deposit: {formatPrice(studio.securityDeposit)}</span>
+                        </div>
+                    </div>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                    <DialogTrigger>
+                        <Button className="w-full gap-2 rounded-xl">
+                            <CalendarDays className="size-4" />
+                            Book Workspace Now
+                        </Button>
+                    </DialogTrigger>
+                    <p className="text-center text-xs text-muted-foreground">
+                        No payment information is collected with this request.
+                    </p>
                 </CardContent>
             </Card>
-        );
-    }
 
-    return (
-        <Card className="mx-auto h-fit w-full max-w-md shadow-lg">
-            <CardHeader className="border-b bg-muted/30">
-                <div className="flex items-start justify-between gap-4">
-                    <div>
-                        <CardTitle className="text-2xl">Reserve this studio</CardTitle>
-                        <CardDescription className="mt-1.5">
-                            Choose a date and time to request your session.
-                        </CardDescription>
+            <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
+                <DialogHeader>
+                    <DialogTitle>{submitted ? "Booking request sent" : "Book Workspace Now"}</DialogTitle>
+                    <DialogDescription>
+                        {submitted
+                            ? `Your request for ${studio.title} is pending confirmation.`
+                            : `Choose a date and time to request ${studio.title}.`}
+                    </DialogDescription>
+                </DialogHeader>
+                {submitted ? (
+                    <div className="flex flex-col items-center px-4 py-6 text-center">
+                        <span className="mb-5 rounded-full bg-emerald-500/10 p-4 text-emerald-600 dark:text-emerald-400">
+                            <CheckCircle2 className="size-9" />
+                        </span>
+                        <Badge variant="outline" className="mb-3 border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                            Pending confirmation
+                        </Badge>
+                        <p className="text-sm text-muted-foreground">
+                            You can follow its status from your bookings.
+                        </p>
+                        <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row">
+                            <Button
+                                render={<Link href="/my-bookings" />}
+                                nativeButton={false}
+                                className="flex-1"
+                            >
+                                View my bookings
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => setSubmitted(false)}
+                                className="flex-1"
+                            >
+                                Book another slot
+                            </Button>
+                        </div>
                     </div>
-                    <CalendarDays className="mt-1 size-5 shrink-0 text-primary" />
-                </div>
-                <div className="flex items-end justify-between gap-3 pt-3">
-                    <span className="text-sm text-muted-foreground">Starting from</span>
-                    <span className="text-right text-2xl font-bold tracking-tight">
-                        {formatPrice(studio.hourlyRate)}
-                        <span className="ml-1 text-sm font-normal text-muted-foreground">/ hour</span>
-                    </span>
-                </div>
-                <div className="grid gap-2 pt-2 text-sm sm:grid-cols-2">
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                        <Badge variant="secondary">{studio.category}</Badge>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground sm:justify-end">
-                        <MapPin className="size-4 shrink-0" />
-                        <span className="truncate">{studio.location}</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                        <Users className="size-4 shrink-0" />
-                        <span>Up to {studio.maxCapacity} people</span>
-                    </div>
-                    <div className="flex items-center gap-2 text-muted-foreground sm:justify-end">
-                        <ShieldCheck className="size-4 shrink-0" />
-                        <span>Deposit: {formatPrice(studio.securityDeposit)}</span>
-                    </div>
-                </div>
-            </CardHeader>
-
-            <CardContent className="pt-6">
-                {error && (
-                    <Alert variant="destructive" className="mb-5">
-                        <AlertCircle />
-                        <AlertDescription>{error}</AlertDescription>
-                    </Alert>
-                )}
-
-                {sessionPending ? (
+                ) : sessionPending ? (
                     <div className="flex min-h-32 items-center justify-center gap-2 text-sm text-muted-foreground">
                         <LoaderCircle className="size-4 animate-spin" />
                         Checking your account…
@@ -222,6 +237,12 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit} className="space-y-5">
+                        {error && (
+                            <Alert variant="destructive">
+                                <AlertCircle />
+                                <AlertDescription>{error}</AlertDescription>
+                            </Alert>
+                        )}
                         <div className="space-y-2">
                             <Label htmlFor="bookingDate">Booking date</Label>
                             <Input
@@ -298,10 +319,7 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
                         </Button>
                     </form>
                 )}
-            </CardContent>
-            <CardFooter className="justify-center border-t text-xs text-muted-foreground">
-                No payment information is collected with this request.
-            </CardFooter>
-        </Card>
+            </DialogContent>
+        </Dialog>
     );
 }

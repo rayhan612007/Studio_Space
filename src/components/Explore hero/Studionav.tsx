@@ -70,15 +70,15 @@ export default function Studionav() {
     };
 
     return (
-        <section className="w-full border-b border-base-content/10 bg-base-100 py-4">
-            <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-4 px-4 lg:grid-cols-[1fr_auto_1fr]">
+        <section className="w-full border-b border-border bg-background py-4">
+            <div className="mx-auto grid max-w-7xl grid-cols-1 items-center gap-4 px-4 sm:px-6 lg:grid-cols-[1fr_auto_1fr] lg:px-8">
 
                 {/* Left Spacer */}
                 <div className="hidden lg:block" />
 
                 {/* Center Category Navbar */}
                 <div className="flex w-full justify-center overflow-x-auto scrollbar-hide">
-                    <div className="flex w-fit max-w-full shrink-0 items-center gap-1 rounded-2xl border border-base-content/10 bg-base-200/60 p-1.5">
+                    <div className="flex w-fit max-w-full shrink-0 items-center gap-1 rounded-2xl border border-border bg-muted/60 p-1.5">
 
                         {categories.map((category) => {
                             const Icon = category.icon;
@@ -88,9 +88,10 @@ export default function Studionav() {
                                 <Link
                                     key={category.value}
                                     href={getCategoryHref(category.value)}
-                                    className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-all duration-300 ${isActive
-                                        ? "bg-primary text-primary-content shadow-lg shadow-primary/20"
-                                        : "text-base-content/70 hover:bg-base-content/10 hover:text-base-content"
+                                    aria-current={isActive ? "page" : undefined}
+                                    className={`flex shrink-0 items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${isActive
+                                        ? "bg-primary text-primary-foreground shadow-sm"
+                                        : "text-muted-foreground hover:bg-background hover:text-foreground"
                                         }`}
                                 >
                                     <Icon size={14} strokeWidth={2.2} />
@@ -107,7 +108,7 @@ export default function Studionav() {
 
                     {/* Price Sorting */}
                     <Select value={activeSort} onValueChange={handleSortChange}>
-                        <SelectTrigger className="h-10 w-[145px] rounded-xl border-base-content/10 bg-base-200/60 text-xs shadow-none">
+                        <SelectTrigger className="h-10 w-[170px] rounded-xl border-border bg-muted/60 text-xs shadow-none">
                             <SelectValue placeholder="Sort by price" />
                         </SelectTrigger>
                         <SelectContent>

@@ -19,6 +19,11 @@ import {
 import { Idata } from "../type/Idata";
 
 export default function Studiocard({ info }: { info: Idata }) {
+  const rating = Number(info.rating);
+  const ratingLabel = Number.isFinite(rating) && rating >= 0 && rating <= 10
+    ? `${rating}/10`
+    : "0/10";
+
   return (
     <Card className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border/70 bg-card p-0 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-xl">
 
@@ -49,7 +54,7 @@ export default function Studiocard({ info }: { info: Idata }) {
         {/* Rating */}
         <div className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-background/90 px-3 py-1.5 text-sm font-semibold shadow-sm backdrop-blur">
           <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-          {info.rating || "New"}
+          {ratingLabel}
         </div>
 
         {/* Location on Image */}

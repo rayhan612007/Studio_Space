@@ -12,7 +12,9 @@ import {
     Loader2,
     Sparkles,
     ArrowLeft,
-    Star
+    Star,
+    Plus,
+    X,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -42,6 +44,84 @@ const availableAmenities = [
     "Restroom Facilities",
 ];
 
+function StudioImageSlot({
+    index,
+    file,
+    onChange,
+    onRemove,
+}: {
+    index: number;
+    file: File | null;
+    onChange: (file: File | null) => void;
+    onRemove: () => void;
+}) {
+    return (
+        <div className="relative">
+            <input
+                id={`studio-image-${index}`}
+                type="file"
+                accept="image/*"
+                className="peer sr-only"
+                onChange={(event) => {
+                    const selected = event.currentTarget.files?.[0] ?? null;
+                    if (!selected) return;
+                    if (!selected.type.startsWith("image/")) {
+                        toast.add({
+                            title: "Unsupported file",
+                            description: "Choose an image file.",
+                            type: "error",
+                        });
+                        event.currentTarget.value = "";
+                        return;
+                    }
+                    if (selected.size > 10 * 1024 * 1024) {
+                        toast.add({
+                            title: "Image is too large",
+                            description: "Choose an image that is 10 MB or smaller.",
+                            type: "error",
+                        });
+                        event.currentTarget.value = "";
+                        return;
+                    }
+                    onChange(selected);
+                    event.currentTarget.value = "";
+                }}
+            />
+            <label
+                htmlFor={`studio-image-${index}`}
+                className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-dashed border-border bg-muted/30 p-3 text-center transition-colors hover:border-primary hover:bg-muted/60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
+            >
+                {file ? (
+                    <>
+                        <ImageIcon className="size-6 text-primary" />
+                        <span className="w-full truncate text-xs text-muted-foreground">
+                            {file.name}
+                        </span>
+                        <span className="text-xs font-medium text-primary">Click to replace</span>
+                    </>
+                ) : (
+                    <>
+                        <Plus className="size-5 text-primary" />
+                        <span className="text-sm font-medium">Add image {index + 1}</span>
+                    </>
+                )}
+            </label>
+            {file && (
+                <Button
+                    type="button"
+                    size="icon-xs"
+                    variant="destructive"
+                    aria-label={`Remove image ${index + 1}`}
+                    className="absolute right-2 top-2"
+                    onClick={onRemove}
+                >
+                    <X />
+                </Button>
+            )}
+        </div>
+    );
+}
+
 export default function AddStudioPage() {
     return (
         <PrivateRoute>
@@ -58,7 +138,9 @@ function AddStudioForm() {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-
+    const [imageFiles, setImageFiles] = useState<(File | null)[]>(
+        () => Array.from({ length: 8 }, () => null),
+    );
     // Toggle amenities checkbox
     const handleAmenityToggle = (amenity: string) => {
         if (selectedAmenities.includes(amenity)) {
@@ -82,18 +164,24 @@ function AddStudioForm() {
             return;
         }
 
+        const selectedImages = imageFiles.filter((file): file is File => file !== null);
+        if (selectedImages.length === 0) {
+            const message = "Select at least one studio image.";
+            setErrorMessage(message);
+            toast.add({ title: "Studio image required", description: message, type: "error" });
+            setLoading(false);
+            return;
+        }
+
         const formData = new FormData(e.currentTarget);
-        const studioData = {
-            ...Object.fromEntries(formData.entries()),
-            amenities: selectedAmenities,
-            email: userEmail,
-        };
+        formData.set("amenities", JSON.stringify(selectedAmenities));
+        selectedImages.forEach((file) => formData.append("images", file));
 
         try {
             const response = await fetch(`${STUDIO_API_URL}/add-studios`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(studioData),
+                credentials: "include",
+                body: formData,
             });
 
             const result = await response.json();
@@ -163,6 +251,7 @@ function AddStudioForm() {
                                 <Label className="text-xs text-muted-foreground">Host Name (Read-only)</Label>
                                 <Input
                                     type="text"
+                                    name="hostName"
                                     value={session?.user?.name || ""}
                                     readOnly
                                     className="mt-1 cursor-not-allowed border-border bg-muted font-medium text-muted-foreground"
@@ -293,26 +382,9 @@ function AddStudioForm() {
                             </div>
                         </div>
 
-                        {/* Image URL */}
-                        <div className="space-y-2">
-                            <Label htmlFor="imageUrl" className="text-sm font-medium text-foreground">
-                                Image URL <span className="text-primary">*</span>
-                            </Label>
-                            <div className="relative">
-                                <ImageIcon className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
-                                <Input
-                                    id="imageUrl"
-                                    name="imageUrl"
-                                    type="url"
-                                    required
-                                    placeholder="paste your imageUrl"
-                                    className="pl-10 h-11 rounded-xl"
-                                />
-                            </div>
-                        </div>
                         <div className="space-y-2">
                             <Label htmlFor="rating" className="text-sm font-medium text-foreground">
-                                Rating <span className="text-primary">*</span>
+                                Rating (0-10) <span className="text-primary">*</span>
                             </Label>
                             <div className="relative">
                                 <Star className="absolute left-3 top-3.5 h-4 w-4 text-muted-foreground" />
@@ -322,14 +394,46 @@ function AddStudioForm() {
                                     type="number"
                                     min="0"
                                     max="10"
-                                    step="0.01"
+                                    step="0.1"
+                                    defaultValue="0"
                                     required
-                                    placeholder="e.g. 10"
                                     className="pl-10 h-11 rounded-xl"
                                 />
                             </div>
                         </div>
 
+                        {/* Studio Images */}
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium text-foreground">
+                                Studio Images <span className="text-primary">*</span>
+                            </Label>
+                            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                                {imageFiles.map((file, index) => (
+                                    <StudioImageSlot
+                                        key={index}
+                                        index={index}
+                                        file={file}
+                                        onChange={(selected) =>
+                                            setImageFiles((current) =>
+                                                current.map((currentFile, slot) =>
+                                                    slot === index ? selected : currentFile,
+                                                ),
+                                            )
+                                        }
+                                        onRemove={() =>
+                                            setImageFiles((current) =>
+                                                current.map((currentFile, slot) =>
+                                                    slot === index ? null : currentFile,
+                                                ),
+                                            )
+                                        }
+                                    />
+                                ))}
+                            </div>
+                            <p className="text-xs text-muted-foreground">
+                                {imageFiles.filter((selected) => selected !== null).length} of 8 images selected. Choose at least one; each image must be 10 MB or smaller.
+                            </p>
+                        </div>
                         {/* Amenities Checkboxes */}
                         <div className="space-y-2">
                             <Label className="flex items-center gap-2 text-sm font-medium text-foreground">

@@ -8,6 +8,7 @@ import StudiosHero from "@/components/Explore hero/Studiohero";
 import Studionav from "@/components/Explore hero/Studionav";
 import { Idata } from "@/components/type/Idata";
 import { Button } from "@/components/ui/button";
+import { STUDIO_API_URL } from "@/lib/studio-api";
 
 interface StudiosProps {
     searchParams: Promise<{
@@ -33,7 +34,7 @@ const Studios = async ({ searchParams }: StudiosProps) => {
     const { category = "all", sort = "default" } = await searchParams;
 
     try {
-        const res = await fetch("http://localhost:7000/studios", {
+        const res = await fetch(`${STUDIO_API_URL}/studios`, {
             cache: "no-store",
         });
 
