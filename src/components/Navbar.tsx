@@ -152,6 +152,16 @@ export default function Navbar() {
         <div className="flex items-center gap-2 md:hidden">
           <ThemeToggle />
 
+          {user ? (
+            <Avatarmenu
+              user={{
+                email: user.email,
+                name: user.name,
+                image: user.image ?? "",
+              }}
+            />
+          ) : null}
+
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             {/* Sheet Trigger */}
             <SheetTrigger
@@ -164,7 +174,7 @@ export default function Navbar() {
             {/* Mobile Sidebar */}
             <SheetContent
               side="left"
-              className="flex w-[300px] flex-col justify-between p-6 sm:w-[350px]"
+              className="flex max-h-[100dvh] min-h-0 w-[300px] flex-col justify-start gap-6 overflow-y-auto overscroll-contain p-6 sm:w-[350px]"
             >
               <SheetTitle className="sr-only">
                 Navigation Menu
@@ -235,6 +245,40 @@ export default function Navbar() {
                     );
                   })}
                 </nav>
+
+                {user ? (
+                  <nav
+                    aria-label="Account navigation"
+                    className="mt-4 flex flex-col gap-2 border-t border-border pt-4"
+                  >
+                    {[
+                      { name: "Dashboard", href: "/dashboard" },
+                      { name: "Add New Studio", href: "/add-studio" },
+                      { name: "My Studio Listings", href: "/my-listings" },
+                      { name: "My Bookings", href: "/my-bookings" },
+                    ].map((link) => {
+                      const isActive =
+                        pathname === link.href ||
+                        pathname.startsWith(`${link.href}/`);
+
+                      return (
+                        <Link
+                          key={link.href}
+                          href={link.href}
+                          aria-current={isActive ? "page" : undefined}
+                          onClick={() => setIsOpen(false)}
+                          className={`rounded-xl px-4 py-3 text-base font-medium transition-colors ${
+                            isActive
+                              ? "bg-primary/10 font-semibold text-primary"
+                              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                          }`}
+                        >
+                          {link.name}
+                        </Link>
+                      );
+                    })}
+                  </nav>
+                ) : null}
               </div>
 
               {/* Mobile Footer Actions */}
@@ -242,26 +286,6 @@ export default function Navbar() {
 
                 {user ? (
                   <>
-                    <Button
-                      render={<Link href="/dashboard" />}
-                      nativeButton={false}
-                      onClick={() => setIsOpen(false)}
-                      variant="outline"
-                      className="w-full justify-start"
-                    >
-                      Dashboard
-                    </Button>
-
-                    <Button
-                      render={<Link href="/add-studio" />}
-                      nativeButton={false}
-                      onClick={() => setIsOpen(false)}
-                      variant="outline"
-                      className="w-full justify-start"
-                    >
-                      Add New Studio
-                    </Button>
-
                     <Button
                       variant="destructive"
                       className="w-full justify-start gap-2 rounded-xl"
