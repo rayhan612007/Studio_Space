@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 
 import BookingCard, {
     type BookingRecord,
     type BookingStatus,
 } from "@/components/bookingaside/Bookingcard";
+import { getBookings } from "@/app/lib/studio-booking-actions";
 import { toast } from "@/components/ui/toast";
 import {
     BookingEmptyState,
@@ -106,14 +107,6 @@ function countBookings(bookings: BookingRecord[]): Record<BookingFilter, number>
     );
 }
 
-async function getErrorMessage(response: Response) {
-    const result: unknown = await response.json().catch(() => null);
-    if (isObject(result) && typeof result.error === "string") {
-        return result.error;
-    }
-    return "We couldn’t load your bookings. Please try again.";
-}
-
 export default function MyBookingsDashboard() {
     const [bookings, setBookings] = useState<BookingRecord[]>([]);
     const [filter, setFilter] = useState<BookingFilter>("All");
@@ -126,16 +119,7 @@ export default function MyBookingsDashboard() {
 
         async function loadBookings() {
             try {
-                const response = await fetch("/api/bookings", {
-                    signal: controller.signal,
-                    cache: "no-store",
-                    credentials: "include",
-                });
-                if (!response.ok) {
-                    throw new Error(await getErrorMessage(response));
-                }
-
-                const result: unknown = await response.json();
+                const result = await getBookings();
                 const nextBookings = parseBookings(result);
                 if (controller.signal.aborted) return;
 
@@ -161,7 +145,9 @@ export default function MyBookingsDashboard() {
             }
         }
 
-        void loadBookings();
+        startTransition(() => {
+            void loadBookings();
+        });
         return () => controller.abort();
     }, [reloadKey]);
 

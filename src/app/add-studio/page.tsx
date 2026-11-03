@@ -22,7 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import PrivateRoute, { usePrivateSession } from "@/components/PrivateRoute";
-import { STUDIO_API_URL } from "@/app/lib/api";
+import { createStudioListing } from "@/app/lib/studio-listing-actions";
 import { toast } from "@/components/ui/toast";
 
 const categories = [
@@ -178,17 +178,7 @@ function AddStudioForm() {
         selectedImages.forEach((file) => formData.append("images", file));
 
         try {
-            const response = await fetch(`${STUDIO_API_URL}/add-studios`, {
-                method: "POST",
-                credentials: "include",
-                body: formData,
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.error || "Failed to create studio listing.");
-            }
+            await createStudioListing(formData);
 
             setSuccessMessage("Studio created successfully! Redirecting...");
             toast.add({

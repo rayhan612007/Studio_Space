@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 
 import { authClient } from "@/app/lib/auth-client";
+import { createBooking } from "@/app/lib/studio-booking-actions";
 import { toast } from "@/components/ui/toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -83,30 +84,13 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
         setError(null);
 
         try {
-            const response = await fetch("/api/bookings", {
-                method: "POST",
-                credentials: "include",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    studio,
-                    bookingDate,
-                    startTime,
-                    endTime,
-                    notes: String(formData.get("notes") ?? ""),
-                }),
+            await createBooking({
+                studio,
+                bookingDate,
+                startTime,
+                endTime,
+                notes: String(formData.get("notes") ?? ""),
             });
-
-            if (!response.ok) {
-                const result: unknown = await response.json().catch(() => null);
-                const message =
-                    typeof result === "object" &&
-                    result !== null &&
-                    "error" in result &&
-                    typeof result.error === "string"
-                        ? result.error
-                        : "We couldn’t create your booking. Please try again.";
-                throw new Error(message);
-            }
 
             setSubmitted(true);
             toast.add({

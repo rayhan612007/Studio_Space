@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { cancelBooking as cancelStudioBooking } from "@/app/lib/studio-booking-actions";
 import { toast } from "@/components/ui/toast";
 import {
     Card,
@@ -185,21 +186,7 @@ function CancelBookingAction({
         setError(null);
 
         try {
-            const response = await fetch(
-                `/api/bookings/${encodeURIComponent(bookingId)}`,
-                { method: "PATCH", credentials: "include" },
-            );
-            if (!response.ok) {
-                const result: unknown = await response.json().catch(() => null);
-                const message =
-                    typeof result === "object" &&
-                    result !== null &&
-                    "error" in result &&
-                    typeof result.error === "string"
-                        ? result.error
-                        : "We couldn’t cancel this booking. Please try again.";
-                throw new Error(message);
-            }
+            await cancelStudioBooking(bookingId);
 
             onBookingCancelled(bookingId);
             toast.add({ title: "Booking cancelled", description: studioTitle, type: "success" });

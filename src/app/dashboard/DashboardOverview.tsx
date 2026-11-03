@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 
 import type { BookingRecord } from "@/components/bookingaside/Bookingcard";
 import { usePrivateSession } from "@/components/PrivateRoute";
+import { getBookings } from "@/app/lib/studio-booking-actions";
 import {
     DashboardHeader,
     DashboardStats,
@@ -23,17 +24,7 @@ export default function DashboardOverview() {
 
         async function loadBookings() {
             try {
-                const response = await fetch("/api/bookings", {
-                    cache: "no-store",
-                    signal: controller.signal,
-                    credentials: "include",
-                });
-
-                if (!response.ok) {
-                    throw new Error("Your booking summary is temporarily unavailable.");
-                }
-
-                const data: unknown = await response.json();
+                const data = await getBookings();
                 const userBookings = parseBookings(data);
 
                 if (!controller.signal.aborted) {
@@ -53,7 +44,9 @@ export default function DashboardOverview() {
             }
         }
 
-        void loadBookings();
+        startTransition(() => {
+            void loadBookings();
+        });
         return () => controller.abort();
     }, []);
 
