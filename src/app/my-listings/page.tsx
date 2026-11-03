@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { startTransition, useEffect, useState } from "react";
 import Link from "next/link";
 
 import PrivateRoute, { usePrivateSession } from "@/components/PrivateRoute";
-import { STUDIO_API_URL } from "@/app/lib/api";
+import { getMyListings } from "@/app/lib/my-listing-actions";
 import ListingCard from "@/components/listing component/ListingCard";
 import type { Idata } from "@/components/type/Idata";
 import { Button } from "@/components/ui/button";
@@ -25,23 +25,20 @@ function ListingsContent() {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(
-                    `${STUDIO_API_URL}/my-listings/${encodeURIComponent(userEmail)}`,
-                    {
-                        credentials: "include",
-                        signal: controller.signal,
-                    },
-                );
-                if (!response.ok) {
-                    throw new Error("Unable to load your listings. Please try again.");
-                }
-
-                const data: unknown = await response.json();
-                if (!Array.isArray(data)) {
+                const data = await getMyListings();
+                const records = Array.isArray(data)
+                    ? data
+                    : typeof data === "object" &&
+                        data !== null &&
+                        "listings" in data &&
+                        Array.isArray(data.listings)
+                      ? data.listings
+                      : null;
+                if (!records) {
                     throw new Error("The listings response was not in the expected format.");
                 }
                 if (!controller.signal.aborted) {
-                    setListings(data as Idata[]);
+                    setListings(records as Idata[]);
                 }
             } catch (requestError) {
                 if (controller.signal.aborted) return;
@@ -63,7 +60,9 @@ function ListingsContent() {
             }
         }
 
-        void fetchListings();
+        startTransition(() => {
+            void fetchListings();
+        });
         return () => controller.abort();
     }, [userEmail]);
 
