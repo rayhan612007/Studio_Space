@@ -48,7 +48,6 @@ export default function Register() {
             image: string;
             password: string;
         };
-        const callbackURL = getCallbackURL();
         const passwordError = validatePassword(user.password);
         if (passwordError) {
             setError(passwordError);
@@ -63,7 +62,7 @@ export default function Register() {
                 email: user.email.trim(),
                 password: user.password,
                 image: user.image.trim() || undefined,
-                callbackURL,
+                callbackURL: "/",
             });
 
             if (registrationError) {
@@ -78,7 +77,7 @@ export default function Register() {
                 description: "Welcome to StudioSpace.",
                 type: "success",
             });
-            router.push(callbackURL);
+            router.push("/");
             router.refresh();
         } catch {
             const message = "An unexpected error occurred. Please try again.";
@@ -118,7 +117,7 @@ export default function Register() {
                 )}
 
                 {/* Social Register Button (Continue with Google) */}
-                <Signingoogle />
+                <Signingoogle callbackURL="/" />
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">

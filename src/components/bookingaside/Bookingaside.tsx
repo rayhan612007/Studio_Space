@@ -16,7 +16,6 @@ import {
 } from "lucide-react";
 
 import { authClient } from "@/app/lib/auth-client";
-import { STUDIO_API_URL } from "@/app/lib/api";
 import { toast } from "@/components/ui/toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -84,7 +83,7 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
         setError(null);
 
         try {
-            const response = await fetch(`${STUDIO_API_URL}/bookings`, {
+            const response = await fetch("/api/bookings", {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },

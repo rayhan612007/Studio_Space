@@ -25,7 +25,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { STUDIO_API_URL } from "@/app/lib/api";
 import { toast } from "@/components/ui/toast";
 import {
     Card,
@@ -187,7 +186,7 @@ function CancelBookingAction({
 
         try {
             const response = await fetch(
-                `${STUDIO_API_URL}/bookings/${encodeURIComponent(bookingId)}`,
+                `/api/bookings/${encodeURIComponent(bookingId)}`,
                 { method: "PATCH", credentials: "include" },
             );
             if (!response.ok) {

@@ -6,7 +6,6 @@ import BookingCard, {
     type BookingRecord,
     type BookingStatus,
 } from "@/components/bookingaside/Bookingcard";
-import { STUDIO_API_URL } from "@/app/lib/api";
 import { toast } from "@/components/ui/toast";
 import {
     BookingEmptyState,
@@ -127,7 +126,7 @@ export default function MyBookingsDashboard() {
 
         async function loadBookings() {
             try {
-                const response = await fetch(`${STUDIO_API_URL}/bookings`, {
+                const response = await fetch("/api/bookings", {
                     signal: controller.signal,
                     cache: "no-store",
                     credentials: "include",

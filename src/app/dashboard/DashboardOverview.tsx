@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 
 import type { BookingRecord } from "@/components/bookingaside/Bookingcard";
 import { usePrivateSession } from "@/components/PrivateRoute";
-import { STUDIO_API_URL } from "@/app/lib/api";
 import {
     DashboardHeader,
     DashboardStats,
@@ -24,7 +23,7 @@ export default function DashboardOverview() {
 
         async function loadBookings() {
             try {
-                const response = await fetch(`${STUDIO_API_URL}/bookings`, {
+                const response = await fetch("/api/bookings", {
                     cache: "no-store",
                     signal: controller.signal,
                     credentials: "include",
