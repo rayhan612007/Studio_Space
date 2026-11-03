@@ -6,7 +6,7 @@ import BookingCard, {
     type BookingRecord,
     type BookingStatus,
 } from "@/components/bookingaside/Bookingcard";
-import { STUDIO_API_URL } from "@/lib/studio-api";
+import { STUDIO_API_URL } from "@/app/lib/api";
 import { toast } from "@/components/ui/toast";
 import {
     BookingEmptyState,

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import type { BookingRecord } from "@/components/bookingaside/Bookingcard";
 import { usePrivateSession } from "@/components/PrivateRoute";
-import { STUDIO_API_URL } from "@/lib/studio-api";
+import { STUDIO_API_URL } from "@/app/lib/api";
 import {
     DashboardHeader,
     DashboardStats,

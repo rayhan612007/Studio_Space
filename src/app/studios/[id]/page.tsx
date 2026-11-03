@@ -13,7 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Bookingaside from "@/components/bookingaside/Bookingaside";
-import { STUDIO_API_URL } from "@/lib/studio-api";
+import { STUDIO_API_URL } from "@/app/lib/api";
 import StudioGallery from "@/components/studios/StudioGallery";
 import type { Idata } from "@/components/type/Idata";
 

@@ -13,7 +13,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { STUDIO_API_URL } from "@/lib/studio-api"
+import { STUDIO_API_URL } from "@/app/lib/api"
 import {
     Dialog,
     DialogClose,

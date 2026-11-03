@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 
 import PrivateRoute, { usePrivateSession } from "@/components/PrivateRoute";
-import { STUDIO_API_URL } from "@/lib/studio-api";
+import { STUDIO_API_URL } from "@/app/lib/api";
 import ListingCard from "@/components/listing component/ListingCard";
 import type { Idata } from "@/components/type/Idata";
 import { Button } from "@/components/ui/button";

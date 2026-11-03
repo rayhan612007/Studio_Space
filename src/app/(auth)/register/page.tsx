@@ -8,9 +8,16 @@ import { ArrowRight, Loader2, Lock, Mail, User, Image as ImageIcon, AlertCircle 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 import Signingoogle from "@/components/Signingoogle";
 import { toast } from "@/components/ui/toast";
+
+function getCallbackURL() {
+    const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
+    return requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+        ? requestedCallback
+        : "/";
+}
 
 export default function Register() {
     const router = useRouter();
@@ -41,6 +48,7 @@ export default function Register() {
             image: string;
             password: string;
         };
+        const callbackURL = getCallbackURL();
         const passwordError = validatePassword(user.password);
         if (passwordError) {
             setError(passwordError);
@@ -55,6 +63,7 @@ export default function Register() {
                 email: user.email.trim(),
                 password: user.password,
                 image: user.image.trim() || undefined,
+                callbackURL,
             });
 
             if (registrationError) {
@@ -69,7 +78,8 @@ export default function Register() {
                 description: "Welcome to StudioSpace.",
                 type: "success",
             });
-            router.push("/");
+            router.push(callbackURL);
+            router.refresh();
         } catch {
             const message = "An unexpected error occurred. Please try again.";
             setError(message);
@@ -108,7 +118,7 @@ export default function Register() {
                 )}
 
                 {/* Social Register Button (Continue with Google) */}
-                <Signingoogle callbackURL="/" />
+                <Signingoogle />
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">
@@ -232,6 +242,15 @@ export default function Register() {
                         Already have an account?{" "}
                         <Link
                             href="/login"
+                            onClick={(event) => {
+                                const callbackURL = getCallbackURL();
+                                if (callbackURL !== "/") {
+                                    event.preventDefault();
+                                    router.push(
+                                        `/login?${new URLSearchParams({ callbackURL })}`,
+                                    );
+                                }
+                            }}
                             className="font-semibold text-primary transition-colors hover:text-primary/80"
                         >
                             Login

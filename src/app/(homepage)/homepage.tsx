@@ -4,7 +4,7 @@ import React from 'react';
 import Howitwork from './Howstudiowork';
 import About from './Aboutus';
 import Studiocategory from './Studiocategory';
-import { STUDIO_API_URL } from "@/lib/studio-api";
+import { STUDIO_API_URL } from "@/app/lib/api";
 import type { Idata } from "@/components/type/Idata";
 
 const Homepage = async () => {

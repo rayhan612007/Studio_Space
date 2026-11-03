@@ -26,7 +26,8 @@ import {
     AvatarFallback,
     AvatarImage,
 } from "@/components/ui/avatar";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
+
 
 interface User {
     email: string;

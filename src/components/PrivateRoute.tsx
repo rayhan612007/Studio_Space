@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, type ReactNode } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 
 type UserSession = NonNullable<
     ReturnType<typeof authClient.useSession>["data"]

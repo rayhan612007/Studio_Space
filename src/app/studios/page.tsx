@@ -8,7 +8,7 @@ import StudiosHero from "@/components/Explore hero/Studiohero";
 import Studionav from "@/components/Explore hero/Studionav";
 import { Idata } from "@/components/type/Idata";
 import { Button } from "@/components/ui/button";
-import { STUDIO_API_URL } from "@/lib/studio-api";
+import { STUDIO_API_URL } from "@/app/lib/api";
 
 interface StudiosProps {
     searchParams: Promise<{

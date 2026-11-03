@@ -1,5 +1,5 @@
 'use client'
-import { authClient } from '@/lib/auth-client';
+import { authClient } from '@/app/lib/auth-client';
 import { Button } from '@/components/ui/button';
 import { Loader2 } from 'lucide-react';
 import React, { useState } from 'react';

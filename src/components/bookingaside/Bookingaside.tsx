@@ -15,8 +15,8 @@ import {
     Users,
 } from "lucide-react";
 
-import { authClient } from "@/lib/auth-client";
-import { STUDIO_API_URL } from "@/lib/studio-api";
+import { authClient } from "@/app/lib/auth-client";
+import { STUDIO_API_URL } from "@/app/lib/api";
 import { toast } from "@/components/ui/toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";

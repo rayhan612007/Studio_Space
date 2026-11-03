@@ -23,7 +23,7 @@ import {
 
 import Avatarmenu from "./Avatarmenu";
 import ThemeToggle from "./Themechnager";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 
 const navLinks = [
   { name: "Home", href: "/" },
