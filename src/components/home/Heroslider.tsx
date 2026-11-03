@@ -117,7 +117,7 @@ export default function HeroSlider() {
                                     </Button>
 
                                     <Button
-                                        render={<Link href="/add-studio" />}
+                                        render={<Link href="/studios" />}
                                         nativeButton={false}
                                         size="lg"
                                         variant="outline"

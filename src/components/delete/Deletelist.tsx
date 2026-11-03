@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
-import { STUDIO_API_URL } from "@/app/lib/api"
+import { deleteMyListing } from "@/app/lib/my-listing-actions"
 import {
     Dialog,
     DialogClose,
@@ -22,22 +22,7 @@ export function DeleteList({ id }: { id: string }) {
         e.preventDefault()
         setLoading(true)
         try {
-            const res = await fetch(`${STUDIO_API_URL}/my-listings/${id}`, {
-                method: 'DELETE',
-                credentials: "include",
-            })
-            if (!res.ok) {
-                const result: unknown = await res.json().catch(() => null)
-                const message =
-                    typeof result === "object" &&
-                    result !== null &&
-                    "error" in result &&
-                    typeof result.error === "string"
-                        ? result.error
-                        : "Unable to delete this listing. Please try again."
-                throw new Error(message)
-            }
-
+            await deleteMyListing(id)
             toast.add({ title: "Listing deleted", type: "success" })
             window.location.reload()
         } catch (error) {

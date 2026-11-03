@@ -13,7 +13,7 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { STUDIO_API_URL } from "@/app/lib/api"
+import { updateMyListing } from "@/app/lib/my-listing-actions"
 import {
     Dialog,
     DialogClose,
@@ -67,35 +67,22 @@ export function UpdateList({ id, initialdata }: { id: string, initialdata?: Idat
         setLoading(true)
 
         const formData = new FormData(e.currentTarget)
-        const updatedata = {
-            ...Object.fromEntries(formData.entries()),
-            amenities: selectedAmenities
-        }
-
-
-
         try {
-            const res = await fetch(`${STUDIO_API_URL}/my-listings/${id}`, {
-                method: "PATCH",
-                credentials: "include",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(updatedata)
+            await updateMyListing(id, {
+                title: String(formData.get("title") ?? ""),
+                category: String(formData.get("category") ?? ""),
+                maxCapacity: String(formData.get("maxCapacity") ?? ""),
+                hourlyRate: String(formData.get("hourlyRate") ?? ""),
+                securityDeposit: String(formData.get("securityDeposit") ?? ""),
+                location: String(formData.get("location") ?? ""),
+                imageUrl: String(formData.get("imageUrl") ?? ""),
+                rating: String(formData.get("rating") ?? ""),
+                overview: String(formData.get("overview") ?? ""),
+                amenities: selectedAmenities,
             })
-            if (!res.ok) {
-                const result: unknown = await res.json().catch(() => null)
-                const message =
-                    typeof result === "object" &&
-                    result !== null &&
-                    "error" in result &&
-                    typeof result.error === "string"
-                        ? result.error
-                        : "Unable to update this listing. Please try again."
-                throw new Error(message)
-            }
             toast.add({ title: "Listing updated", type: "success" })
             setOpen(false)
+            window.location.reload()
         } catch (error) {
             toast.add({
                 title: "Could not update listing",
