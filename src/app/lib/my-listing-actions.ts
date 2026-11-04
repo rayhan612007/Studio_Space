@@ -163,7 +163,7 @@ export async function updateMyListing(
         hostName: session.user.name,
     };
     await sendListingRequest(
-        `/my-listings/${encodeURIComponent(id)}`,
+        `/studios/${encodeURIComponent(id)}`,
         "PATCH",
         body,
     );
@@ -172,7 +172,7 @@ export async function updateMyListing(
 export async function deleteMyListing(id: string): Promise<void> {
     if (!id.trim()) throw new Error("A listing ID is required.");
     await sendListingRequest(
-        `/my-listings/${encodeURIComponent(id)}`,
+        `/studios/${encodeURIComponent(id)}`,
         "DELETE",
     );
 }

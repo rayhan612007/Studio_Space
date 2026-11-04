@@ -23,11 +23,15 @@ const Studiodetails = async ({ params }: { params: Promise<{ id: string }> }) =>
 
     let studio: Idata | null = null;
     let studioNotFound = false;
+    console.log(id);
 
     try {
         const res = await fetch(`${STUDIO_API_URL}/studios/${id}`, {
             cache: "no-store",
         });
+        if (!res.ok) {
+            console.log("object");
+        }
 
         if (res.status === 404) {
             studioNotFound = true;

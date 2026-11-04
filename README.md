@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
 
-## Getting Started
+# 🎬 Studio Space
 
-First, run the development server:
+[![Next.js](https://img.shields.io/badge/Next.js-15+-black?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-98.8%25-blue?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
+[![Better Auth](https://img.shields.io/badge/Better_Auth-Secure-orange?style=for-the-badge)]()
+[![Status](https://img.shields.io/badge/Status-Alpha-orange?style=for-the-badge)]()
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**Studio Space** is a modern, full-featured web application designed for discovering, listing, and managing creative studio spaces seamlessly. 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[Live Demo](https://studio-space-alpha.vercel.app)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+</div>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🚀 Features
 
-To learn more about Next.js, take a look at the following resources:
+- **Secure Authentication:** Robust user authentication and session management powered by **Better Auth**.
+- **Explore & Filter:** Browse through a variety of studio spaces with responsive layouts, category filters, and interactive hero sliders (powered by Swiper).
+- **Studio Management:** Create, edit, and delete studio listings effortlessly.
+- **Image Uploads:** Integrated direct image uploading using ImageBB for seamless media handling.
+- **Modern UI/UX:** Clean, elegant design styled with **Tailwind CSS** and optimized components.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Tech Stack
 
-## Deploy on Vercel
+- **Framework:** [Next.js](https://nextjs.org/) (App Router)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Authentication:** Better Auth
+- **Libraries & Tools:** Swiper (for carousels), ImageBB API (for image hosting)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📦 Getting Started
+
+Follow these instructions to get a local copy up and running for development and testing purposes.
+
+### Prerequisites
+
+Make sure you have Node.js and a package manager installed on your machine:
+- [Node.js](https://nodejs.org/) (v18+ recommended)
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone [https://github.com/rayhan612007/Studio_Space.git](https://github.com/rayhan612007/Studio_Space.git)
+   cd Studio_Space

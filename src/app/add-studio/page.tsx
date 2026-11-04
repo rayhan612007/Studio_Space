@@ -7,14 +7,11 @@ import {
     DollarSign,
     Users,
     MapPin,
-    Image as ImageIcon,
     CheckSquare,
     Loader2,
     Sparkles,
     ArrowLeft,
     Star,
-    Plus,
-    X,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -44,84 +41,6 @@ const availableAmenities = [
     "Restroom Facilities",
 ];
 
-function StudioImageSlot({
-    index,
-    file,
-    onChange,
-    onRemove,
-}: {
-    index: number;
-    file: File | null;
-    onChange: (file: File | null) => void;
-    onRemove: () => void;
-}) {
-    return (
-        <div className="relative">
-            <input
-                id={`studio-image-${index}`}
-                type="file"
-                accept="image/*"
-                className="peer sr-only"
-                onChange={(event) => {
-                    const selected = event.currentTarget.files?.[0] ?? null;
-                    if (!selected) return;
-                    if (!selected.type.startsWith("image/")) {
-                        toast.add({
-                            title: "Unsupported file",
-                            description: "Choose an image file.",
-                            type: "error",
-                        });
-                        event.currentTarget.value = "";
-                        return;
-                    }
-                    if (selected.size > 10 * 1024 * 1024) {
-                        toast.add({
-                            title: "Image is too large",
-                            description: "Choose an image that is 10 MB or smaller.",
-                            type: "error",
-                        });
-                        event.currentTarget.value = "";
-                        return;
-                    }
-                    onChange(selected);
-                    event.currentTarget.value = "";
-                }}
-            />
-            <label
-                htmlFor={`studio-image-${index}`}
-                className="flex min-h-32 cursor-pointer flex-col items-center justify-center gap-2 overflow-hidden rounded-xl border border-dashed border-border bg-muted/30 p-3 text-center transition-colors hover:border-primary hover:bg-muted/60 peer-focus-visible:ring-2 peer-focus-visible:ring-ring"
-            >
-                {file ? (
-                    <>
-                        <ImageIcon className="size-6 text-primary" />
-                        <span className="w-full truncate text-xs text-muted-foreground">
-                            {file.name}
-                        </span>
-                        <span className="text-xs font-medium text-primary">Click to replace</span>
-                    </>
-                ) : (
-                    <>
-                        <Plus className="size-5 text-primary" />
-                        <span className="text-sm font-medium">Add image {index + 1}</span>
-                    </>
-                )}
-            </label>
-            {file && (
-                <Button
-                    type="button"
-                    size="icon-xs"
-                    variant="destructive"
-                    aria-label={`Remove image ${index + 1}`}
-                    className="absolute right-2 top-2"
-                    onClick={onRemove}
-                >
-                    <X />
-                </Button>
-            )}
-        </div>
-    );
-}
-
 export default function AddStudioPage() {
     return (
         <PrivateRoute>
@@ -138,7 +57,7 @@ function AddStudioForm() {
     const [successMessage, setSuccessMessage] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
-    const [imageFiles, setImageFiles] = useState<(File | null)[]>(
+    const [imageUrls, setImageUrls] = useState<(string | null)[]>(
         () => Array.from({ length: 8 }, () => null),
     );
     // Toggle amenities checkbox
@@ -164,18 +83,36 @@ function AddStudioForm() {
             return;
         }
 
-        const selectedImages = imageFiles.filter((file): file is File => file !== null);
-        if (selectedImages.length === 0) {
+        const selectedImageUrls = imageUrls
+            .map((imageUrl) => imageUrl?.trim() ?? "")
+            .filter(Boolean);
+        if (selectedImageUrls.length === 0) {
             const message = "Select at least one studio image.";
             setErrorMessage(message);
             toast.add({ title: "Studio image required", description: message, type: "error" });
             setLoading(false);
             return;
         }
+        if (
+            selectedImageUrls.some((imageUrl) => {
+                try {
+                    const url = new URL(imageUrl);
+                    return url.protocol !== "https:";
+                } catch {
+                    return true;
+                }
+            })
+        ) {
+            const message = "Enter valid HTTPS image URLs.";
+            setErrorMessage(message);
+            toast.add({ title: "Invalid image URL", description: message, type: "error" });
+            setLoading(false);
+            return;
+        }
 
         const formData = new FormData(e.currentTarget);
         formData.set("amenities", JSON.stringify(selectedAmenities));
-        selectedImages.forEach((file) => formData.append("images", file));
+        formData.set("imageUrls", JSON.stringify(selectedImageUrls));
 
         try {
             await createStudioListing(formData);
@@ -398,31 +335,30 @@ function AddStudioForm() {
                                 Studio Images <span className="text-primary">*</span>
                             </Label>
                             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                                {imageFiles.map((file, index) => (
-                                    <StudioImageSlot
+                                {imageUrls.map((imageUrl, index) => (
+                                    <Input
                                         key={index}
-                                        index={index}
-                                        file={file}
-                                        onChange={(selected) =>
-                                            setImageFiles((current) =>
-                                                current.map((currentFile, slot) =>
-                                                    slot === index ? selected : currentFile,
+                                        type="url"
+                                        value={imageUrl ?? ""}
+                                        placeholder={`Image URL ${index + 1}`}
+                                        aria-label={`Studio image URL ${index + 1}`}
+                                        onChange={(event) =>
+                                            setImageUrls((current) =>
+                                                current.map((currentUrl, slot) =>
+                                                    slot === index
+                                                        ? event.target.value || null
+                                                        : currentUrl,
                                                 ),
                                             )
                                         }
-                                        onRemove={() =>
-                                            setImageFiles((current) =>
-                                                current.map((currentFile, slot) =>
-                                                    slot === index ? null : currentFile,
-                                                ),
-                                            )
-                                        }
+                                        className="h-11 rounded-xl"
                                     />
                                 ))}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                                {imageFiles.filter((selected) => selected !== null).length} of 8 images selected. Choose at least one; each image must be 10 MB or smaller.
+                                {imageUrls.filter((imageUrl) => imageUrl?.trim()).length} of 8 image URLs entered. Enter at least one image URL.
                             </p>
+
                         </div>
                         {/* Amenities Checkboxes */}
                         <div className="space-y-2">

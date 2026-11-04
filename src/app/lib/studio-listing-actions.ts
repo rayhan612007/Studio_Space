@@ -5,7 +5,6 @@ import { headers } from "next/headers";
 import { auth } from "@/app/lib/auth";
 import { STUDIO_API_URL } from "@/app/lib/api";
 
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024;
 const MAX_IMAGES = 8;
 
 function getErrorMessage(result: unknown) {
@@ -29,18 +28,27 @@ export async function createStudioListing(formData: FormData): Promise<void> {
         throw new Error("Sign in before creating a studio listing.");
     }
 
-    const images = formData.getAll("images");
+    let imageUrls: unknown;
+    try {
+        imageUrls = JSON.parse(String(formData.get("imageUrls") ?? "[]"));
+    } catch {
+        throw new Error("Image URLs must be a valid list.");
+    }
     if (
-        images.length === 0 ||
-        images.length > MAX_IMAGES ||
-        images.some(
-            (image) =>
-                !(image instanceof File) ||
-                !image.type.startsWith("image/") ||
-                image.size > MAX_IMAGE_SIZE,
-        )
+        !Array.isArray(imageUrls) ||
+        imageUrls.length === 0 ||
+        imageUrls.length > MAX_IMAGES ||
+        imageUrls.some((imageUrl) => {
+            if (typeof imageUrl !== "string") return true;
+            try {
+                const url = new URL(imageUrl);
+                return url.protocol !== "https:";
+            } catch {
+                return true;
+            }
+        })
     ) {
-        throw new Error("Choose 1 to 8 valid images, each 10 MB or smaller.");
+        throw new Error("Enter 1 to 8 valid HTTPS image URLs.");
     }
 
     const username = process.env.user;
@@ -49,11 +57,14 @@ export async function createStudioListing(formData: FormData): Promise<void> {
         throw new Error("The studio API credentials are not configured.");
     }
 
-    formData.set("email", email);
-    formData.set("hostName", session.user.name);
+    const body: Record<string, unknown> = Object.fromEntries(formData.entries());
+    body.email = email;
+    body.hostName = session.user.name;
+    body.imageUrls = imageUrls;
 
     const upstreamHeaders = new Headers({
         Authorization: `Basic ${Buffer.from(`${username}:${password}`).toString("base64")}`,
+        "Content-Type": "application/json",
     });
     const cookie = requestHeaders.get("cookie");
     if (cookie) upstreamHeaders.set("Cookie", cookie);
@@ -63,7 +74,7 @@ export async function createStudioListing(formData: FormData): Promise<void> {
         response = await fetch(`${STUDIO_API_URL}/add-studios`, {
             method: "POST",
             headers: upstreamHeaders,
-            body: formData,
+            body: JSON.stringify(body),
             cache: "no-store",
         });
     } catch (error) {
