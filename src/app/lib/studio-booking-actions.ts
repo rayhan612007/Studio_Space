@@ -11,6 +11,9 @@ type BookingInput = {
     bookingDate: string;
     startTime: string;
     endTime: string;
+    timeZone: string;
+    startAt: string;
+    endAt: string;
     notes: string;
 };
 
@@ -76,8 +79,17 @@ export async function getBookings(): Promise<unknown> {
     return requestStudioApi("/bookings", "GET");
 }
 
-export async function createBooking(booking: BookingInput): Promise<void> {
+export async function createBooking(
+    booking: BookingInput,
+): Promise<void> {
     await requestStudioApi("/bookings", "POST", booking);
+}
+
+export async function confirmBooking(bookingId: string): Promise<void> {
+    await requestStudioApi(
+        `/bookings/${encodeURIComponent(bookingId)}/confirm`,
+        "POST",
+    );
 }
 
 export async function cancelBooking(bookingId: string): Promise<void> {

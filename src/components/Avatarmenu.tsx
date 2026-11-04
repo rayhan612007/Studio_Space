@@ -49,7 +49,7 @@ export default function Avatarmenu({ user }: { user: User }) {
     const router = useRouter();
     const name = user.name.trim() || "User";
     const avatarName = name.charAt(0).toUpperCase();
-    const avatarImage = user.image?.trim();
+    const avatarImage = user.image;
 
     const clearCloseTimeout = () => {
         if (closeTimeout.current) {
@@ -99,7 +99,11 @@ export default function Avatarmenu({ user }: { user: User }) {
             >
                 <Avatar className="h-10 w-10 cursor-pointer border-2 border-primary">
                     {avatarImage ? (
-                        <AvatarImage src={avatarImage} alt={`${name}'s profile`} />
+                        <AvatarImage
+                            src={avatarImage}
+                            alt={`${name}'s profile`}
+
+                        />
                     ) : null}
                     <AvatarFallback className="text-sm font-semibold text-primary">
                         {avatarName}

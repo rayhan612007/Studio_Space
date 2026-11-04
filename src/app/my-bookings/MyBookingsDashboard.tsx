@@ -151,6 +151,16 @@ export default function MyBookingsDashboard() {
         return () => controller.abort();
     }, [reloadKey]);
 
+    useEffect(() => {
+        const interval = window.setInterval(() => {
+            if (document.visibilityState === "visible") {
+                setReloadKey((key) => key + 1);
+            }
+        }, 60_000);
+
+        return () => window.clearInterval(interval);
+    }, []);
+
     const counts = countBookings(bookings);
     const visibleBookings =
         filter === "All"
@@ -161,6 +171,14 @@ export default function MyBookingsDashboard() {
         setBookings((current) =>
             current.map((booking) =>
                 booking.id === id ? { ...booking, status: "Cancelled" } : booking,
+            ),
+        );
+    }
+
+    function handleBookingConfirmed(id: string) {
+        setBookings((current) =>
+            current.map((booking) =>
+                booking.id === id ? { ...booking, status: "Confirmed" } : booking,
             ),
         );
     }
@@ -218,6 +236,7 @@ export default function MyBookingsDashboard() {
                                         }
                                         booking={booking}
                                         onBookingCancelled={handleBookingCancelled}
+                                        onBookingConfirmed={handleBookingConfirmed}
                                     />
                                 ))}
                             </div>

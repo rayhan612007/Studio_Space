@@ -7,6 +7,7 @@ import {
     AlertCircle,
     CalendarDays,
     Check,
+    CheckCircle2,
     Clock3,
     MapPin,
     X,
@@ -25,7 +26,10 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { cancelBooking as cancelStudioBooking } from "@/app/lib/studio-booking-actions";
+import {
+    cancelBooking as cancelStudioBooking,
+    confirmBooking as confirmStudioBooking,
+} from "@/app/lib/studio-booking-actions";
 import { toast } from "@/components/ui/toast";
 import {
     Card,
@@ -66,6 +70,7 @@ export interface BookingRecord {
 interface BookingCardProps {
     booking: BookingRecord;
     onBookingCancelled: (id: string) => void;
+    onBookingConfirmed: (id: string) => void;
 }
 
 interface BookingDetails {
@@ -244,7 +249,62 @@ function CancelBookingAction({
     );
 }
 
-export default function BookingCard({ booking, onBookingCancelled }: BookingCardProps) {
+function ConfirmBookingAction({
+    bookingId,
+    studioTitle,
+    onBookingConfirmed,
+}: {
+    bookingId: string;
+    studioTitle: string;
+    onBookingConfirmed: (id: string) => void;
+}) {
+    const [confirming, setConfirming] = useState(false);
+
+    async function confirmBooking() {
+        setConfirming(true);
+        try {
+            await confirmStudioBooking(bookingId);
+            onBookingConfirmed(bookingId);
+            toast.add({
+                title: "Booking confirmed",
+                description: `${studioTitle} is reserved for your selected time.`,
+                type: "success",
+            });
+        } catch (requestError) {
+            const message = requestError instanceof Error
+                ? requestError.message
+                : "Please try again.";
+            toast.add({
+                title: message.toLowerCase().includes("already booked")
+                    ? "Studio already booked"
+                    : "Could not confirm booking",
+                description: message,
+                type: "error",
+            });
+        } finally {
+            setConfirming(false);
+        }
+    }
+
+    return (
+        <Button
+            type="button"
+            size="sm"
+            disabled={confirming}
+            onClick={confirmBooking}
+            className="gap-1.5"
+        >
+            <CheckCircle2 className="size-4" />
+            {confirming ? "Checking…" : "Confirm booking"}
+        </Button>
+    );
+}
+
+export default function BookingCard({
+    booking,
+    onBookingCancelled,
+    onBookingConfirmed,
+}: BookingCardProps) {
     const details = getBookingDetails(booking);
 
     return (
@@ -296,22 +356,30 @@ export default function BookingCard({ booking, onBookingCancelled }: BookingCard
                 <BookingSchedule date={details.date} time={details.time} />
             </CardContent>
 
-            <CardFooter className="mt-3 flex flex-wrap justify-between gap-2 rounded-b-xl border-t bg-transparent px-4 py-3">
+            <CardFooter className="mt-3 flex flex-col items-stretch gap-2 rounded-b-xl border-t bg-transparent px-4 py-3">
                 <Button
                     size="sm"
                     variant="outline"
                     render={<Link href={details.studioUrl} />}
                     nativeButton={false}
+                    className="w-full"
                 >
                     View studio
                 </Button>
 
                 {details.status === "Pending" && booking.id && (
-                    <CancelBookingAction
-                        bookingId={booking.id}
-                        studioTitle={details.studioTitle}
-                        onBookingCancelled={onBookingCancelled}
-                    />
+                    <div className="flex w-full items-center justify-between gap-2">
+                        <ConfirmBookingAction
+                            bookingId={booking.id}
+                            studioTitle={details.studioTitle}
+                            onBookingConfirmed={onBookingConfirmed}
+                        />
+                        <CancelBookingAction
+                            bookingId={booking.id}
+                            studioTitle={details.studioTitle}
+                            onBookingCancelled={onBookingCancelled}
+                        />
+                    </div>
                 )}
             </CardFooter>
         </Card>

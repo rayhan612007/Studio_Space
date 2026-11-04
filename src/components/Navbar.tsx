@@ -206,6 +206,7 @@ export default function Navbar() {
                         <AvatarImage
                           src={session.user.image}
                           alt={session.user.name}
+                          
                         />
                       )}
                       <AvatarFallback className="text-sm font-semibold text-primary">

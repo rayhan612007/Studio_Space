@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
     AlertCircle,
     CalendarDays,
@@ -55,13 +55,29 @@ function formatPrice(value: string) {
 export default function Bookingaside({ studio }: { studio: Idata }) {
     const { data: session, isPending: sessionPending } = authClient.useSession();
     const pathname = usePathname();
+    const router = useRouter();
+    const formRef = useRef<HTMLFormElement>(null);
     const [loading, setLoading] = useState(false);
     const [submitted, setSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [open, setOpen] = useState(false);
-    const today = new Date().toISOString().slice(0, 10);
     const signedIn = Boolean(session?.user);
     const loginHref = `/login?callbackURL=${encodeURIComponent(pathname || "/studios")}`;
+
+    useEffect(() => {
+        if (!open) return;
+        const now = new Date();
+        const localToday = [
+            now.getFullYear(),
+            String(now.getMonth() + 1).padStart(2, "0"),
+            String(now.getDate()).padStart(2, "0"),
+        ].join("-");
+        const dateInput = formRef.current?.elements.namedItem("bookingDate");
+        if (dateInput instanceof HTMLInputElement) {
+            dateInput.min = localToday;
+            dateInput.value = localToday;
+        }
+    }, [open]);
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -84,26 +100,38 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
         setError(null);
 
         try {
+            const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
             await createBooking({
                 studio,
                 bookingDate,
                 startTime,
                 endTime,
+                timeZone,
+                startAt: new Date(`${bookingDate}T${startTime}:00`).toISOString(),
+                endAt: new Date(`${bookingDate}T${endTime}:00`).toISOString(),
                 notes: String(formData.get("notes") ?? ""),
             });
 
             setSubmitted(true);
             toast.add({
-                title: "Booking request sent",
-                description: "You can track its status in My Bookings.",
+                title: "Booking request submitted",
+                description: "Your booking is Pending. Confirm it from My Bookings after checking availability.",
                 type: "success",
             });
+            setOpen(false);
+            router.push("/my-bookings");
         } catch (requestError) {
             const message = requestError instanceof Error
                 ? requestError.message
                 : "We couldn’t create your booking. Please try again.";
             setError(message);
-            toast.add({ title: "Booking failed", description: message, type: "error" });
+            toast.add({
+                title: message.includes("already booked")
+                    ? "Studio already booked"
+                    : "Booking failed",
+                description: message,
+                type: "error",
+            });
         } finally {
             setLoading(false);
         }
@@ -162,24 +190,24 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
 
             <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>{submitted ? "Booking request sent" : "Book Workspace Now"}</DialogTitle>
-                    <DialogDescription>
-                        {submitted
-                            ? `Your request for ${studio.title} is pending confirmation.`
-                            : `Choose a date and time to request ${studio.title}.`}
-                    </DialogDescription>
+                        <DialogTitle>{submitted ? "Booking request submitted" : "Book Workspace Now"}</DialogTitle>
+                        <DialogDescription>
+                            {submitted
+                                ? `Your request for ${studio.title} is Pending until you confirm it from My Bookings.`
+                                : `Choose a date and time to request ${studio.title}.`}
+                        </DialogDescription>
                 </DialogHeader>
                 {submitted ? (
-                    <div className="flex flex-col items-center px-4 py-6 text-center">
-                        <span className="mb-5 rounded-full bg-emerald-500/10 p-4 text-emerald-600 dark:text-emerald-400">
-                            <CheckCircle2 className="size-9" />
-                        </span>
-                        <Badge variant="outline" className="mb-3 border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
-                            Pending confirmation
-                        </Badge>
-                        <p className="text-sm text-muted-foreground">
-                            You can follow its status from your bookings.
-                        </p>
+                        <div className="flex flex-col items-center px-4 py-6 text-center">
+                            <span className="mb-5 rounded-full bg-amber-500/10 p-4 text-amber-600 dark:text-amber-400">
+                                <CheckCircle2 className="size-9" />
+                            </span>
+                            <Badge variant="outline" className="mb-3 border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-300">
+                                Pending
+                            </Badge>
+                            <p className="text-sm text-muted-foreground">
+                                Confirm the booking from My Bookings. If another confirmed booking overlaps, it will remain Pending.
+                            </p>
                         <div className="mt-6 flex w-full flex-col gap-2 sm:flex-row">
                             <Button
                                 render={<Link href="/my-bookings" />}
@@ -219,7 +247,7 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
                         </Button>
                     </div>
                 ) : (
-                    <form onSubmit={handleSubmit} className="space-y-5">
+                    <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
                         {error && (
                             <Alert variant="destructive">
                                 <AlertCircle />
@@ -233,8 +261,6 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
                                 type="date"
                                 id="bookingDate"
                                 name="bookingDate"
-                                min={today}
-                                defaultValue={today}
                                 className="h-11"
                             />
                         </div>
@@ -283,7 +309,7 @@ export default function Bookingaside({ studio }: { studio: Idata }) {
                         </div>
 
                         <div className="rounded-xl bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
-                            Your request will be saved as <strong className="font-semibold text-foreground">Pending</strong> until the host responds.
+                            Your request is saved as <strong className="font-semibold text-foreground">Pending</strong>. Confirm it from My Bookings; overlapping confirmed bookings will prevent confirmation.
                         </div>
 
                         <Button
