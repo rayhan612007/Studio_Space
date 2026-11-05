@@ -14,7 +14,8 @@ const Signingoogle = ({ callbackURL: callbackOverride }: { callbackURL?: string 
         const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
         const callbackURL =
             callbackOverride ??
-            (requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
+            (requestedCallback?.startsWith("/")
+                && !requestedCallback.startsWith("//")
                 ? requestedCallback
                 : "/");
 

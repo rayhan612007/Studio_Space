@@ -12,11 +12,13 @@ import { authClient } from "@/app/lib/auth-client";
 import Signingoogle from "@/components/Signingoogle";
 import { toast } from "@/components/ui/toast";
 
+const DEFAULT_LOGIN_REDIRECT = "/";
+
 function getCallbackURL() {
     const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
     return requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
         ? requestedCallback
-        : "/";
+        : DEFAULT_LOGIN_REDIRECT;
 }
 
 export default function Login() {
@@ -50,7 +52,7 @@ export default function Login() {
             }
 
             toast.add({ title: "Welcome back", description: "You’re signed in.", type: "success" });
-            router.push(callbackURL);
+            router.replace(callbackURL);
             router.refresh();
         } catch {
             const message = "An unexpected error occurred.";
@@ -91,7 +93,7 @@ export default function Login() {
                 )}
 
                 {/* Social Login Button (Continue with Google) */}
-                <Signingoogle />
+                <Signingoogle callbackURL={getCallbackURL()} />
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">

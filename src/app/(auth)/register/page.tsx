@@ -57,12 +57,14 @@ export default function Register() {
 
         setLoading(true);
         try {
+            const callbackURL = getCallbackURL();
+            const loginURL = `/login?${new URLSearchParams({ callbackURL })}`;
             const { error: registrationError } = await authClient.signUp.email({
                 name: user.name.trim(),
                 email: user.email.trim(),
                 password: user.password,
                 image: user.image.trim() || undefined,
-                callbackURL: "/",
+                callbackURL: loginURL,
             });
 
             if (registrationError) {
@@ -72,12 +74,26 @@ export default function Register() {
                 return;
             }
 
-            toast.add({
-                title: "Account created",
-                description: "Welcome to StudioSpace.",
-                type: "success",
-            });
-            router.push("/");
+            let signOutFailed = false;
+            try {
+                const { error: signOutError } = await authClient.signOut();
+                signOutFailed = Boolean(signOutError);
+            } catch {
+                signOutFailed = true;
+            }
+
+            toast.add(signOutFailed
+                ? {
+                    title: "Account created",
+                    description: "Please log out of the existing session, then log in with your new account.",
+                    type: "error",
+                }
+                : {
+                    title: "Account created",
+                    description: "Please log in with your new account.",
+                    type: "success",
+                });
+            router.replace(loginURL);
             router.refresh();
         } catch {
             const message = "An unexpected error occurred. Please try again.";
@@ -117,7 +133,7 @@ export default function Register() {
                 )}
 
                 {/* Social Register Button (Continue with Google) */}
-                <Signingoogle callbackURL="/" />
+                <Signingoogle />
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">
