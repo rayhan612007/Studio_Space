@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowRight, Loader2, Lock, Mail, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,8 +14,7 @@ import { toast } from "@/components/ui/toast";
 
 const DEFAULT_LOGIN_REDIRECT = "/";
 
-function getCallbackURL() {
-    const requestedCallback = new URLSearchParams(window.location.search).get("callbackURL");
+function getCallbackURL(requestedCallback: string | null) {
     return requestedCallback?.startsWith("/") && !requestedCallback.startsWith("//")
         ? requestedCallback
         : DEFAULT_LOGIN_REDIRECT;
@@ -23,6 +22,8 @@ function getCallbackURL() {
 
 export default function Login() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackURL = getCallbackURL(searchParams.get("callbackURL"));
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -35,7 +36,6 @@ export default function Login() {
         const formData = new FormData(e.currentTarget);
         const email = formData.get("email") as string;
         const password = formData.get("password") as string;
-        const callbackURL = getCallbackURL();
         try {
             const { error } = await authClient.signIn.email({
                 email,
@@ -93,7 +93,7 @@ export default function Login() {
                 )}
 
                 {/* Social Login Button (Continue with Google) */}
-                <Signingoogle callbackURL={getCallbackURL()} />
+                <Signingoogle callbackURL={callbackURL} />
 
                 {/* Divider */}
                 <div className="relative flex py-1 items-center">
@@ -181,7 +181,6 @@ export default function Login() {
                         <Link
                             href="/register"
                             onClick={(event) => {
-                                const callbackURL = getCallbackURL();
                                 if (callbackURL !== "/") {
                                     event.preventDefault();
                                     router.push(
